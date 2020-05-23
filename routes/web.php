@@ -13,10 +13,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Auth::routes(['register' => false]);
 
-Auth::routes();
-
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/', 'HomeController@index')->name('home');
+Route::get('/home', 'HomeController@index');
+Route::get('/questions/create', 'QuestionController@create')->middleware('auth')->name('questions.create');
+Route::get('/questions', 'QuestionController@index')->name('questions');
+Route::post('/questions', 'QuestionController@store');
