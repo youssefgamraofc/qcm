@@ -3,6 +3,7 @@
 @section('content')
 <div class="container">
   @auth
+
   <div class="row justify-content-center">
       <div class="col-md-10">
           <div class="card">
@@ -11,11 +12,12 @@
               </div>
 
               <div class="card-body">
-                <form class="add-form" action="{{action('QuestionController@store')}}" method="post">
+                <form class="add-form" action="{{action('QuestionController@update', $quest->id)}}" method="post">
                   @csrf
+                  @method('PATCH')
                   <div class="form-group">
                     <label for="question">Question</label>
-                    <input type="text" class="form-control" id="question" name="question" value="{{old('question')}}">
+                    <input type="text" class="form-control" id="question" name="question" value="{{old('question') ?? $quest->question}}">
                   </div>
                   <small id="" class="form-text text-danger">{{ $errors->first('question') }}</small>
 
@@ -24,7 +26,7 @@
                     <label for="type">Type</label>
                     <select class="form-control w-50" name="type">
                       @foreach($types as $key => $value)
-                        <option value="{{$key}}">{{$value}}</option>
+                        <option value="{{$key}}" {{ $quest->type == $key ? ' selected' : '' }}>{{$value}}</option>
                       @endforeach
                     </select>
                     <small id="" class="form-text text-danger">{{ $errors->first('type') }}</small>
@@ -36,12 +38,12 @@
                     <div class="col-md-3">
                       <div class="form-group">
                         <label for="answer1">Answer 1</label>
-                        <input type="text" class="form-control" id="answer1" name="answer1" value="{{old('answer1')}}">
+                        <input type="text" class="form-control" id="answer1" name="answer1" value="{{old('answer1') ?? $quest->answer1}}">
                         <small id="" class="form-text text-danger">{{ $errors->first('answer1') }}</small>
 
                       </div>
                       <div class="form-check">
-                        <input class="form-check-input" type="radio" name="correct_answer" id="correct_answer" value="1">
+                        <input class="form-check-input" type="radio" name="correct_answer" id="correct_answer" value="1" {{ $quest->correct_answer == $quest->answer1 ? ' checked' : '' }}>
                         <label class="form-check-label" for="correct_answer">
                           Correct
                         </label>
@@ -50,12 +52,12 @@
                     <div class="col-md-3">
                       <div class="form-group">
                         <label for="answer2">Answer 2</label>
-                        <input type="text" class="form-control" id="answer2" name="answer2" value="{{old('answer2')}}">
+                        <input type="text" class="form-control" id="answer2" name="answer2" value="{{old('answer2') ?? $quest->answer2}}">
                         <small id="" class="form-text text-danger">{{ $errors->first('answer2') }}</small>
 
                       </div>
                       <div class="form-check">
-                        <input class="form-check-input" type="radio" name="correct_answer" id="correct_answer2" value="2">
+                        <input class="form-check-input" type="radio" name="correct_answer" id="correct_answer2" value="2" {{ $quest->correct_answer == $quest->answer2 ? ' checked' : '' }}>
                         <label class="form-check-label" for="correct_answer2">
                           Correct
                         </label>
@@ -64,12 +66,12 @@
                     <div class="col-md-3">
                       <div class="form-group">
                         <label for="answer3">Answer 3</label>
-                        <input type="text" class="form-control" id="answer3" name="answer3" value="{{old('answer3')}}">
+                        <input type="text" class="form-control" id="answer3" name="answer3" value="{{old('answer3') ?? $quest->answer3}}">
                         <small id="" class="form-text text-danger">{{ $errors->first('answer3') }}</small>
 
                       </div>
                       <div class="form-check">
-                        <input class="form-check-input" type="radio" name="correct_answer" id="correct_answer3" value="3">
+                        <input class="form-check-input" type="radio" name="correct_answer" id="correct_answer3" value="3" {{ $quest->correct_answer == $quest->answer3 ? ' checked' : '' }}>
                         <label class="form-check-label" for="correct_answer3">
                           Correct
                         </label>
@@ -78,12 +80,12 @@
                     <div class="col-md-3">
                       <div class="form-group">
                         <label for="answer4">Answer 4</label>
-                        <input type="text" class="form-control" id="answer4" name="answer4" value="{{old('answer4')}}">
+                        <input type="text" class="form-control" id="answer4" name="answer4" value="{{old('answer4') ?? $quest->answer4}}">
                         <small id="" class="form-text text-danger">{{ $errors->first('answer4') }}</small>
 
                       </div>
                       <div class="form-check">
-                        <input class="form-check-input" type="radio" name="correct_answer" id="correct_answer4" value="4">
+                        <input class="form-check-input" type="radio" name="correct_answer" id="correct_answer4" value="4" {{ $quest->correct_answer == $quest->answer4 ? ' checked' : '' }}>
                         <label class="form-check-label" for="correct_answer4">
                           Correct
                         </label>

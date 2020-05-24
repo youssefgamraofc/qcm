@@ -51,8 +51,17 @@
                       </a>
 
                       <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                        <a href="{{action('QuestionController@index')}}" class="dropdown-item">
+                          Questions
+                        </a>
                         <a href="{{action('QuestionController@create')}}" class="dropdown-item">
                           Create Quest
+                        </a>
+                        <a href="{{action('QuestionController@validation')}}" class="dropdown-item">
+                          Non Valid Quest
+                        </a>
+                        <a href="{{action('QuestionController@validated')}}" class="dropdown-item">
+                          Validated Quest
                         </a>
                         <a class="dropdown-item" href="{{ route('logout') }}"
                            onclick="event.preventDefault();
