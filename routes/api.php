@@ -17,3 +17,10 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::get('questions', 'Api\QuestionController@index');
+Route::get('question/{id}', 'Api\QuestionController@show');
+
+Route::get('filter/{pagination}/{type}', 'Api\QuestionController@filter');
+Route::get('types', 'Api\QuestionController@showTypes');
+Route::get('type/{id}', 'Api\QuestionController@getQuestionsByType');

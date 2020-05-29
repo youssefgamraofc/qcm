@@ -9,6 +9,9 @@ class Question extends Model
 
   protected $guarded = [];
 
+
+  public $limit = 20;
+
     public function types($id = null){
       $types = [
         1 => 'تاريخ',
@@ -23,5 +26,9 @@ class Question extends Model
       }
 
       return $types;
+    }
+
+    public function available_pagination(){
+      return [20,40,50];
     }
 }
