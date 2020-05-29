@@ -4,8 +4,28 @@
           <div class="card-header text-center h2">Start Now</div>
 
           <div class="card-body p-5">
+            <div class="" v-show="show_results">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th scope="col">Question</th>
+                    <th scope="col">Question</th>
+                    <th scope="col">Your answer</th>
+                    <th scope="col">Correct Answer</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(value, key) in answers">
+                    <td>{{key}}</td>
+                    <th scope="row">{{value.question}}</th>
+                    <td>{{value.answer}}</td>
+                    <td>{{value.correct_answer}}</td>
 
-            <div class="row">
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div v-show="!show_results" class="row">
               <div class="col-md-6">
                 <h3>Select a type please</h3>
                 <div class="radio-toolbar-type ">
@@ -35,10 +55,10 @@
                 </div>
               </div>
 
+              <button type="button" @click="openModal" name="button" class="mb-3 btn btn-lg btn-outline-primary w-100">START</button>
             </div>
           </div>
 
-          <button type="button" @click="openModal" name="button" class="mb-3 btn btn-lg btn-outline-primary">START</button>
 
       </div>
 
@@ -57,8 +77,6 @@
               {{question_key +1}} of {{ 20 }}
               <div >
                 <p>Ques {{quest.question}}</p>
-                The pagination is :{{number}}
-                The type is :{{type}}.
                 <div class="answers">
                   <div class="radio-toolbar-type ">
                     <div class="row">
@@ -83,12 +101,10 @@
                 </div>
               </div>
 
-              <a v-show="+question_key < 20" class="btn btn-outline-success" href="#" @click="validateAnswer()">
-                Next >>
-              </a>
-              <a v-show="+question_key === '20'" class="btn btn-outline-success" href="#" @click="">
-                GO TO RESULTS >>
-              </a>
+              <button type="button" class="btn" :class="maximum ? 'btn-outline-success' : 'btn-outline-primary' " @click="maximum ? results() : validateAnswer()">
+                {{maximum ? 'SUBTMIT':'NEXT >>'}}
+              </button>
+
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">QUIT</button>
@@ -142,6 +158,8 @@
 
           question: {},
           pagination: {},
+
+          show_results: false,
         }
       },
       methods:{
@@ -183,9 +201,6 @@
 
                 // this.setDataForDisplay(response.data.data);
 
-                vm.makePagination(response.data.meta, response.data.links);
-
-
                 // console.log(response.data.data[0]['id']);
 
               })
@@ -199,27 +214,17 @@
 
 
         },
-        makePagination(meta, links){
-          let pagination = {
-            current_page: meta.current_page,
-            last_page: meta.last_page,
-            next_page_url: links.next,
-            prev_page_url: links.prev,
-          };
 
-          this.pagination = pagination;
-        },
-        setNext(keey){
-          self.quest = '';
-          self.quest_id = self.quest[self.question_key]['id'];
-          self.correct_answer = self.quest[self.question_key]['correct_answer'];
-        },
         validateAnswer(){
           this.answered_count ++;
 
           this.new_answer = {
+            quest_key: this.question_key,
             id : this.quest_id,
             answer : this.answer,
+            question: this.quest.question,
+            correct_answer: this.correct_answer,
+            correct: this.correct_answer === this.answer,
           };
 
           this.answers.push(this.new_answer);
@@ -233,11 +238,16 @@
           this.answer = '';
 
           this.question_key ++;
+          this.maximum = this.question_key >= 19;
 
           this.quest = this.question[this.question_key];
           this.quest_id = this.question[this.question_key]['id'];
-          this.correct_answer = this.quest[this.question_key]['correct_answer'];
+          this.correct_answer = this.question[this.question_key]['correct_answer'];
 
+        },
+        results(){
+          $('#modalr').modal('hide');
+          this.show_results = true;
         },
 
       },

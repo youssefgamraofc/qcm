@@ -16,8 +16,8 @@ class Question extends JsonResource
      */
     public function toArray($request)
     {
-      $question_m = new QuestionModel();
       // return parent::toArray($request);
+      $question_m = new QuestionModel();
 
       return [
         "id" => $this->id,

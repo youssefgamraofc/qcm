@@ -61,6 +61,11 @@ class QuestionController extends Controller
           $questions = Question::where('type', $type)->inRAndomOrder()->limit($question_m->limit)->get();
           return QuestionResource::collection($questions);
 
+        }elseif ($type == 99) {
+          $questions = Question::inRAndomOrder()->limit($question_m->limit)->get();
+
+          return QuestionResource::collection($questions);
+
         }
       }
 

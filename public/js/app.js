@@ -2044,6 +2044,22 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 // I couldnot find a way to limit and paginate
 // therefor im going to use vue to check if the user has reached the number of quesiton that they want
 // E.G if(answered_questions_count == number) then the next button should be disabled
@@ -2075,7 +2091,8 @@ __webpack_require__.r(__webpack_exports__);
       types: {},
       available_pagination: {},
       question: {},
-      pagination: {}
+      pagination: {},
+      show_results: false
     };
   },
   methods: {
@@ -2114,33 +2131,22 @@ __webpack_require__.r(__webpack_exports__);
         self.quest_id = response.data.data[self.question_key]['id'];
         self.correct_answer = response.data.data[self.question_key]['correct_answer'];
         self.quest = self.question[self.question_key]; // this.setDataForDisplay(response.data.data);
-
-        vm.makePagination(response.data.meta, response.data.links); // console.log(response.data.data[0]['id']);
+        // console.log(response.data.data[0]['id']);
       })["catch"](function (error) {
         // handle error
         console.log(error);
       }).then(function () {// always executed
       });
     },
-    makePagination: function makePagination(meta, links) {
-      var pagination = {
-        current_page: meta.current_page,
-        last_page: meta.last_page,
-        next_page_url: links.next,
-        prev_page_url: links.prev
-      };
-      this.pagination = pagination;
-    },
-    setNext: function setNext(keey) {
-      self.quest = '';
-      self.quest_id = self.quest[self.question_key]['id'];
-      self.correct_answer = self.quest[self.question_key]['correct_answer'];
-    },
     validateAnswer: function validateAnswer() {
       this.answered_count++;
       this.new_answer = {
+        quest_key: this.question_key,
         id: this.quest_id,
-        answer: this.answer
+        answer: this.answer,
+        question: this.quest.question,
+        correct_answer: this.correct_answer,
+        correct: this.correct_answer === this.answer
       };
       this.answers.push(this.new_answer);
 
@@ -2152,9 +2158,14 @@ __webpack_require__.r(__webpack_exports__);
 
       this.answer = '';
       this.question_key++;
+      this.maximum = this.question_key >= 19;
       this.quest = this.question[this.question_key];
       this.quest_id = this.question[this.question_key]['id'];
-      this.correct_answer = this.quest[this.question_key]['correct_answer'];
+      this.correct_answer = this.question[this.question_key]['correct_answer'];
+    },
+    results: function results() {
+      $('#modalr').modal('hide');
+      this.show_results = true;
     }
   },
   mounted: function mounted() {
@@ -37761,120 +37772,173 @@ var render = function() {
       ]),
       _vm._v(" "),
       _c("div", { staticClass: "card-body p-5" }, [
-        _c("div", { staticClass: "row" }, [
-          _c("div", { staticClass: "col-md-6" }, [
-            _c("h3", [_vm._v("Select a type please")]),
-            _vm._v(" "),
-            _c("div", { staticClass: "radio-toolbar-type " }, [
+        _c(
+          "div",
+          {
+            directives: [
+              {
+                name: "show",
+                rawName: "v-show",
+                value: _vm.show_results,
+                expression: "show_results"
+              }
+            ]
+          },
+          [
+            _c("table", { staticClass: "table table-hover" }, [
+              _vm._m(0),
+              _vm._v(" "),
               _c(
-                "div",
-                { staticClass: "row" },
-                [
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.type,
-                        expression: "type"
-                      }
-                    ],
-                    attrs: { type: "radio", id: "radio2099", value: "99" },
-                    domProps: { checked: _vm._q(_vm.type, "99") },
-                    on: {
-                      change: function($event) {
-                        _vm.type = "99"
-                      }
-                    }
-                  }),
-                  _vm._v(" "),
-                  _c("label", { attrs: { for: "radio2099" } }, [_vm._v("All")]),
-                  _vm._v(" "),
-                  _vm._l(_vm.types, function(value, key) {
-                    return _c("div", { key: key, staticClass: "mr-2" }, [
-                      _c("input", {
-                        directives: [
-                          {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.type,
-                            expression: "type"
-                          }
-                        ],
-                        attrs: { type: "radio", id: key + "point" },
-                        domProps: {
-                          value: key,
-                          checked: _vm._q(_vm.type, key)
-                        },
-                        on: {
-                          change: function($event) {
-                            _vm.type = key
-                          }
-                        }
-                      }),
-                      _vm._v(" "),
-                      _c("label", { attrs: { for: key + "point" } }, [
-                        _vm._v(_vm._s(value))
-                      ])
-                    ])
-                  })
-                ],
-                2
-              )
-            ])
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "col-md-6" }, [
-            _c("h3", [_vm._v("How many questions")]),
-            _vm._v(" "),
-            _c("div", { staticClass: "radio-toolbar-number" }, [
-              _c(
-                "div",
-                { staticClass: "row" },
-                _vm._l(_vm.available_pagination, function(value, key) {
-                  return _c("div", { key: key }, [
-                    _c("input", {
-                      directives: [
-                        {
-                          name: "model",
-                          rawName: "v-model",
-                          value: _vm.number,
-                          expression: "number"
-                        }
-                      ],
-                      attrs: { type: "radio", id: "radio20" + key },
-                      domProps: {
-                        value: value,
-                        checked: _vm._q(_vm.number, value)
-                      },
-                      on: {
-                        change: function($event) {
-                          _vm.number = value
-                        }
-                      }
-                    }),
+                "tbody",
+                _vm._l(_vm.answers, function(value, key) {
+                  return _c("tr", [
+                    _c("td", [_vm._v(_vm._s(key))]),
                     _vm._v(" "),
-                    _c("label", { attrs: { for: "radio20" + key } }, [
-                      _vm._v(_vm._s(value))
-                    ])
+                    _c("th", { attrs: { scope: "row" } }, [
+                      _vm._v(_vm._s(value.question))
+                    ]),
+                    _vm._v(" "),
+                    _c("td", [_vm._v(_vm._s(value.answer))]),
+                    _vm._v(" "),
+                    _c("td", [_vm._v(_vm._s(value.correct_answer))])
                   ])
                 }),
                 0
               )
             ])
-          ])
-        ])
-      ]),
-      _vm._v(" "),
-      _c(
-        "button",
-        {
-          staticClass: "mb-3 btn btn-lg btn-outline-primary",
-          attrs: { type: "button", name: "button" },
-          on: { click: _vm.openModal }
-        },
-        [_vm._v("START")]
-      )
+          ]
+        ),
+        _vm._v(" "),
+        _c(
+          "div",
+          {
+            directives: [
+              {
+                name: "show",
+                rawName: "v-show",
+                value: !_vm.show_results,
+                expression: "!show_results"
+              }
+            ],
+            staticClass: "row"
+          },
+          [
+            _c("div", { staticClass: "col-md-6" }, [
+              _c("h3", [_vm._v("Select a type please")]),
+              _vm._v(" "),
+              _c("div", { staticClass: "radio-toolbar-type " }, [
+                _c(
+                  "div",
+                  { staticClass: "row" },
+                  [
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.type,
+                          expression: "type"
+                        }
+                      ],
+                      attrs: { type: "radio", id: "radio2099", value: "99" },
+                      domProps: { checked: _vm._q(_vm.type, "99") },
+                      on: {
+                        change: function($event) {
+                          _vm.type = "99"
+                        }
+                      }
+                    }),
+                    _vm._v(" "),
+                    _c("label", { attrs: { for: "radio2099" } }, [
+                      _vm._v("All")
+                    ]),
+                    _vm._v(" "),
+                    _vm._l(_vm.types, function(value, key) {
+                      return _c("div", { key: key, staticClass: "mr-2" }, [
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.type,
+                              expression: "type"
+                            }
+                          ],
+                          attrs: { type: "radio", id: key + "point" },
+                          domProps: {
+                            value: key,
+                            checked: _vm._q(_vm.type, key)
+                          },
+                          on: {
+                            change: function($event) {
+                              _vm.type = key
+                            }
+                          }
+                        }),
+                        _vm._v(" "),
+                        _c("label", { attrs: { for: key + "point" } }, [
+                          _vm._v(_vm._s(value))
+                        ])
+                      ])
+                    })
+                  ],
+                  2
+                )
+              ])
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "col-md-6" }, [
+              _c("h3", [_vm._v("How many questions")]),
+              _vm._v(" "),
+              _c("div", { staticClass: "radio-toolbar-number" }, [
+                _c(
+                  "div",
+                  { staticClass: "row" },
+                  _vm._l(_vm.available_pagination, function(value, key) {
+                    return _c("div", { key: key }, [
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.number,
+                            expression: "number"
+                          }
+                        ],
+                        attrs: { type: "radio", id: "radio20" + key },
+                        domProps: {
+                          value: value,
+                          checked: _vm._q(_vm.number, value)
+                        },
+                        on: {
+                          change: function($event) {
+                            _vm.number = value
+                          }
+                        }
+                      }),
+                      _vm._v(" "),
+                      _c("label", { attrs: { for: "radio20" + key } }, [
+                        _vm._v(_vm._s(value))
+                      ])
+                    ])
+                  }),
+                  0
+                )
+              ])
+            ]),
+            _vm._v(" "),
+            _c(
+              "button",
+              {
+                staticClass: "mb-3 btn btn-lg btn-outline-primary w-100",
+                attrs: { type: "button", name: "button" },
+                on: { click: _vm.openModal }
+              },
+              [_vm._v("START")]
+            )
+          ]
+        )
+      ])
     ]),
     _vm._v(" "),
     _c(
@@ -37898,7 +37962,7 @@ var render = function() {
           },
           [
             _c("div", { staticClass: "modal-content" }, [
-              _vm._m(0),
+              _vm._m(1),
               _vm._v(" "),
               _c("div", { staticClass: "modal-body" }, [
                 _vm._v(
@@ -37910,13 +37974,7 @@ var render = function() {
                 ),
                 _c("div", [
                   _c("p", [_vm._v("Ques " + _vm._s(_vm.quest.question))]),
-                  _vm._v(
-                    "\n            The pagination is :" +
-                      _vm._s(_vm.number) +
-                      "\n            The type is :" +
-                      _vm._s(_vm.type) +
-                      ".\n            "
-                  ),
+                  _vm._v(" "),
                   _c("div", { staticClass: "answers" }, [
                     _c("div", { staticClass: "radio-toolbar-type " }, [
                       _c("div", { staticClass: "row" }, [
@@ -38033,47 +38091,30 @@ var render = function() {
                 ]),
                 _vm._v(" "),
                 _c(
-                  "a",
+                  "button",
                   {
-                    directives: [
-                      {
-                        name: "show",
-                        rawName: "v-show",
-                        value: +_vm.question_key < 20,
-                        expression: "+question_key < 20"
-                      }
-                    ],
-                    staticClass: "btn btn-outline-success",
-                    attrs: { href: "#" },
+                    staticClass: "btn",
+                    class: _vm.maximum
+                      ? "btn-outline-success"
+                      : "btn-outline-primary",
+                    attrs: { type: "button" },
                     on: {
                       click: function($event) {
-                        return _vm.validateAnswer()
+                        _vm.maximum ? _vm.results() : _vm.validateAnswer()
                       }
                     }
                   },
-                  [_vm._v("\n            Next >>\n          ")]
-                ),
-                _vm._v(" "),
-                _c(
-                  "a",
-                  {
-                    directives: [
-                      {
-                        name: "show",
-                        rawName: "v-show",
-                        value: +_vm.question_key === "20",
-                        expression: "+question_key === '20'"
-                      }
-                    ],
-                    staticClass: "btn btn-outline-success",
-                    attrs: { href: "#" },
-                    on: { click: function($event) {} }
-                  },
-                  [_vm._v("\n            GO TO RESULTS >>\n          ")]
+                  [
+                    _vm._v(
+                      "\n            " +
+                        _vm._s(_vm.maximum ? "SUBTMIT" : "NEXT >>") +
+                        "\n          "
+                    )
+                  ]
                 )
               ]),
               _vm._v(" "),
-              _vm._m(1)
+              _vm._m(2)
             ])
           ]
         )
@@ -38082,6 +38123,22 @@ var render = function() {
   ])
 }
 var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", [
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Question")]),
+        _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Question")]),
+        _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Your answer")]),
+        _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Correct Answer")])
+      ])
+    ])
+  },
   function() {
     var _vm = this
     var _h = _vm.$createElement
@@ -50452,14 +50509,15 @@ __webpack_require__.r(__webpack_exports__);
 /*!********************************************************!*\
   !*** ./resources/js/components/QuestionsComponent.vue ***!
   \********************************************************/
-/*! exports provided: default */
+/*! no static exports found */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _QuestionsComponent_vue_vue_type_template_id_16b373db___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./QuestionsComponent.vue?vue&type=template&id=16b373db& */ "./resources/js/components/QuestionsComponent.vue?vue&type=template&id=16b373db&");
 /* harmony import */ var _QuestionsComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./QuestionsComponent.vue?vue&type=script&lang=js& */ "./resources/js/components/QuestionsComponent.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _QuestionsComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _QuestionsComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
 
@@ -50489,7 +50547,7 @@ component.options.__file = "resources/js/components/QuestionsComponent.vue"
 /*!*********************************************************************************!*\
   !*** ./resources/js/components/QuestionsComponent.vue?vue&type=script&lang=js& ***!
   \*********************************************************************************/
-/*! exports provided: default */
+/*! no static exports found */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
