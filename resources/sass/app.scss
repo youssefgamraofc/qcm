@@ -74,6 +74,21 @@
   }
 }
 
+.pagination>li>a { border-radius: 50% !important;margin: 0 5px;}
+
+.unanswered{
+  background-color: #ecf0f1;
+  border-color: #7f8c8d;
+  color: #7f8c8d;
+  border-radius: 2% !important;
+}
+.answered{
+  background-color: #ecf0f1;
+  border-color: #1abc9c;
+  color: #1abc9c;
+}
+
+
 // #modalr{
 //   height:100%;
 //   width: 100%;

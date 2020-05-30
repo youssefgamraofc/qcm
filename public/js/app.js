@@ -2060,6 +2060,45 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 // I couldnot find a way to limit and paginate
 // therefor im going to use vue to check if the user has reached the number of quesiton that they want
 // E.G if(answered_questions_count == number) then the next button should be disabled
@@ -2158,14 +2197,26 @@ __webpack_require__.r(__webpack_exports__);
 
       this.answer = '';
       this.question_key++;
-      this.maximum = this.question_key >= 19;
-      this.quest = this.question[this.question_key];
-      this.quest_id = this.question[this.question_key]['id'];
-      this.correct_answer = this.question[this.question_key]['correct_answer'];
+      this.maximum = this.question_key >= 20;
+
+      if (!this.maximum) {
+        this.quest = this.question[this.question_key];
+        this.quest_id = this.question[this.question_key]['id'];
+        this.correct_answer = this.question[this.question_key]['correct_answer'];
+      }
     },
     results: function results() {
       $('#modalr').modal('hide');
       this.show_results = true;
+    },
+    paginationStatus: function paginationStatus(n, key) {
+      if (key === n) {
+        return '';
+      } else if (key < n) {
+        return 'disabled';
+      } else if (key > n) {
+        return 'active';
+      }
     }
   },
   mounted: function mounted() {
@@ -37785,23 +37836,34 @@ var render = function() {
             ]
           },
           [
+            _c("p", [_vm._v("Correct Answers: " + _vm._s(_vm.correct))]),
+            _vm._v(" "),
+            _c("p", [_vm._v("Incorrect Answers: " + _vm._s(_vm.incorrect))]),
+            _vm._v(" "),
             _c("table", { staticClass: "table table-hover" }, [
               _vm._m(0),
               _vm._v(" "),
               _c(
                 "tbody",
                 _vm._l(_vm.answers, function(value, key) {
-                  return _c("tr", [
-                    _c("td", [_vm._v(_vm._s(key))]),
-                    _vm._v(" "),
-                    _c("th", { attrs: { scope: "row" } }, [
-                      _vm._v(_vm._s(value.question))
-                    ]),
-                    _vm._v(" "),
-                    _c("td", [_vm._v(_vm._s(value.answer))]),
-                    _vm._v(" "),
-                    _c("td", [_vm._v(_vm._s(value.correct_answer))])
-                  ])
+                  return _c(
+                    "tr",
+                    {
+                      class:
+                        value.answer === value.correct_answer
+                          ? "bg-success"
+                          : "bg-warning"
+                    },
+                    [
+                      _c("th", { attrs: { scope: "row" } }, [
+                        _vm._v(_vm._s(value.question))
+                      ]),
+                      _vm._v(" "),
+                      _c("td", [_vm._v(_vm._s(value.answer))]),
+                      _vm._v(" "),
+                      _c("td", [_vm._v(_vm._s(value.correct_answer))])
+                    ]
+                  )
                 }),
                 0
               )
@@ -37967,7 +38029,9 @@ var render = function() {
               _c("div", { staticClass: "modal-body" }, [
                 _vm._v(
                   "\n          " +
-                    _vm._s(_vm.question_key + 1) +
+                    _vm._s(
+                      _vm.question_key === 20 ? 20 : _vm.question_key + 1
+                    ) +
                     " of " +
                     _vm._s(20) +
                     "\n          "
@@ -38087,13 +38151,149 @@ var render = function() {
                         ])
                       ])
                     ])
-                  ])
+                  ]),
+                  _vm._v(" "),
+                  _c(
+                    "nav",
+                    { attrs: { "aria-label": "Page navigation example" } },
+                    [
+                      _c(
+                        "ul",
+                        { staticClass: "pagination justify-content-center" },
+                        _vm._l(5, function(n) {
+                          return _c(
+                            "li",
+                            {
+                              staticClass: "page-item",
+                              class: _vm.paginationStatus(
+                                n,
+                                _vm.question_key + 1
+                              )
+                            },
+                            [
+                              _c(
+                                "a",
+                                {
+                                  staticClass: "page-link",
+                                  attrs: { href: "#" }
+                                },
+                                [_vm._v(_vm._s(n))]
+                              )
+                            ]
+                          )
+                        }),
+                        0
+                      )
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "nav",
+                    { attrs: { "aria-label": "Page navigation example" } },
+                    [
+                      _c(
+                        "ul",
+                        { staticClass: "pagination justify-content-center" },
+                        _vm._l(5, function(n) {
+                          return _c(
+                            "li",
+                            {
+                              staticClass: "page-item",
+                              class: _vm.paginationStatus(
+                                n + 5,
+                                _vm.question_key + 1
+                              )
+                            },
+                            [
+                              _c(
+                                "a",
+                                {
+                                  staticClass: "page-link",
+                                  attrs: { href: "#" }
+                                },
+                                [_vm._v(_vm._s(n + 5))]
+                              )
+                            ]
+                          )
+                        }),
+                        0
+                      )
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "nav",
+                    { attrs: { "aria-label": "Page navigation example" } },
+                    [
+                      _c(
+                        "ul",
+                        { staticClass: "pagination justify-content-center" },
+                        _vm._l(5, function(n) {
+                          return _c(
+                            "li",
+                            {
+                              staticClass: "page-item",
+                              class: _vm.paginationStatus(
+                                n + 10,
+                                _vm.question_key + 1
+                              )
+                            },
+                            [
+                              _c(
+                                "a",
+                                {
+                                  staticClass: "page-link",
+                                  attrs: { href: "#" }
+                                },
+                                [_vm._v(_vm._s(n + 10))]
+                              )
+                            ]
+                          )
+                        }),
+                        0
+                      )
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "nav",
+                    { attrs: { "aria-label": "Page navigation example" } },
+                    [
+                      _c(
+                        "ul",
+                        { staticClass: "pagination justify-content-center" },
+                        _vm._l(5, function(n) {
+                          return _c(
+                            "li",
+                            {
+                              staticClass: "page-item",
+                              class: _vm.paginationStatus(
+                                n + 15,
+                                _vm.question_key + 1
+                              )
+                            },
+                            [
+                              _c(
+                                "a",
+                                {
+                                  staticClass: "page-link",
+                                  attrs: { href: "#" }
+                                },
+                                [_vm._v(_vm._s(n + 15))]
+                              )
+                            ]
+                          )
+                        }),
+                        0
+                      )
+                    ]
+                  )
                 ]),
                 _vm._v(" "),
                 _c(
                   "button",
                   {
-                    staticClass: "btn",
+                    staticClass: "btn justify-content-center w-100",
                     class: _vm.maximum
                       ? "btn-outline-success"
                       : "btn-outline-primary",
@@ -38107,7 +38307,7 @@ var render = function() {
                   [
                     _vm._v(
                       "\n            " +
-                        _vm._s(_vm.maximum ? "SUBTMIT" : "NEXT >>") +
+                        _vm._s(_vm.maximum ? "SUBTMIT" : "VALIDATE »>") +
                         "\n          "
                     )
                   ]
@@ -38129,8 +38329,6 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("thead", [
       _c("tr", [
-        _c("th", { attrs: { scope: "col" } }, [_vm._v("Question")]),
-        _vm._v(" "),
         _c("th", { attrs: { scope: "col" } }, [_vm._v("Question")]),
         _vm._v(" "),
         _c("th", { attrs: { scope: "col" } }, [_vm._v("Your answer")]),
@@ -50509,15 +50707,14 @@ __webpack_require__.r(__webpack_exports__);
 /*!********************************************************!*\
   !*** ./resources/js/components/QuestionsComponent.vue ***!
   \********************************************************/
-/*! no static exports found */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _QuestionsComponent_vue_vue_type_template_id_16b373db___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./QuestionsComponent.vue?vue&type=template&id=16b373db& */ "./resources/js/components/QuestionsComponent.vue?vue&type=template&id=16b373db&");
 /* harmony import */ var _QuestionsComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./QuestionsComponent.vue?vue&type=script&lang=js& */ "./resources/js/components/QuestionsComponent.vue?vue&type=script&lang=js&");
-/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _QuestionsComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _QuestionsComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__[key]; }) }(__WEBPACK_IMPORT_KEY__));
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
 
@@ -50547,7 +50744,7 @@ component.options.__file = "resources/js/components/QuestionsComponent.vue"
 /*!*********************************************************************************!*\
   !*** ./resources/js/components/QuestionsComponent.vue?vue&type=script&lang=js& ***!
   \*********************************************************************************/
-/*! no static exports found */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

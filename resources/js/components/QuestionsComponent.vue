@@ -5,18 +5,18 @@
 
           <div class="card-body p-5">
             <div class="" v-show="show_results">
+              <p>Correct Answers: {{correct}}</p>
+              <p>Incorrect Answers: {{incorrect}}</p>
               <table class="table table-hover">
                 <thead>
                   <tr>
-                    <th scope="col">Question</th>
                     <th scope="col">Question</th>
                     <th scope="col">Your answer</th>
                     <th scope="col">Correct Answer</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(value, key) in answers">
-                    <td>{{key}}</td>
+                  <tr v-for="(value, key) in answers" :class="value.answer === value.correct_answer? 'bg-success': 'bg-warning'">
                     <th scope="row">{{value.question}}</th>
                     <td>{{value.answer}}</td>
                     <td>{{value.correct_answer}}</td>
@@ -74,7 +74,7 @@
               </button>
             </div>
             <div class="modal-body">
-              {{question_key +1}} of {{ 20 }}
+              {{question_key === 20? 20 :  question_key +1}} of {{ 20 }}
               <div >
                 <p>Ques {{quest.question}}</p>
                 <div class="answers">
@@ -99,10 +99,49 @@
                     </div>
                   </div>
                 </div>
+
+
+                <nav aria-label="Page navigation example">
+                  <ul class="pagination justify-content-center">
+
+                    <li class="page-item" v-for="n in 5" :class="paginationStatus(n,question_key+1)">
+                      <a class="page-link" href="#">{{n}}</a>
+                    </li>
+
+                  </ul>
+                </nav>
+                <nav aria-label="Page navigation example">
+                  <ul class="pagination justify-content-center">
+
+                    <li class="page-item" v-for="n in 5" :class="paginationStatus(n+5,question_key+1)">
+                      <a class="page-link" href="#">{{n+5}}</a>
+                    </li>
+
+                  </ul>
+                </nav>
+                <nav aria-label="Page navigation example">
+                  <ul class="pagination justify-content-center">
+
+                    <li class="page-item" v-for="n in 5" :class="paginationStatus(n+10,question_key+1)">
+                      <a class="page-link" href="#">{{n+10}}</a>
+                    </li>
+
+                  </ul>
+                </nav>
+                <nav aria-label="Page navigation example">
+                  <ul class="pagination justify-content-center">
+
+                    <li class="page-item" v-for="n in 5"
+                      :class="paginationStatus(n+15,question_key+1)">
+                      <a class="page-link" href="#">{{n+15}}</a>
+                    </li>
+
+                  </ul>
+                </nav>
               </div>
 
-              <button type="button" class="btn" :class="maximum ? 'btn-outline-success' : 'btn-outline-primary' " @click="maximum ? results() : validateAnswer()">
-                {{maximum ? 'SUBTMIT':'NEXT >>'}}
+              <button type="button" class="btn justify-content-center w-100" :class="maximum ? 'btn-outline-success' : 'btn-outline-primary' " @click="maximum ? results() : validateAnswer()">
+                {{maximum ? 'SUBTMIT':'VALIDATE »>'}}
               </button>
 
             </div>
@@ -238,17 +277,29 @@
           this.answer = '';
 
           this.question_key ++;
-          this.maximum = this.question_key >= 19;
+          this.maximum = this.question_key >= 20;
 
-          this.quest = this.question[this.question_key];
-          this.quest_id = this.question[this.question_key]['id'];
-          this.correct_answer = this.question[this.question_key]['correct_answer'];
+          if (!this.maximum) {
+            this.quest = this.question[this.question_key];
+            this.quest_id = this.question[this.question_key]['id'];
+            this.correct_answer = this.question[this.question_key]['correct_answer'];
+          }
+
 
         },
         results(){
           $('#modalr').modal('hide');
           this.show_results = true;
         },
+        paginationStatus(n, key){
+          if (key === n ) {
+            return '';
+          }else if (key < n) {
+            return 'disabled';
+          }else if (key > n) {
+            return 'active';
+          }
+        }
 
       },
       mounted() {
