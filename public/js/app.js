@@ -2082,23 +2082,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 // I couldnot find a way to limit and paginate
 // therefor im going to use vue to check if the user has reached the number of quesiton that they want
 // E.G if(answered_questions_count == number) then the next button should be disabled
@@ -2131,7 +2114,11 @@ __webpack_require__.r(__webpack_exports__);
       available_pagination: {},
       question: {},
       pagination: {},
-      show_results: false
+      show_results: false,
+      // Incase the user changed their answer
+      submitted_answer: '',
+      // Incase the user tried to check on validate more than 10 times
+      validate_count: "0"
     };
   },
   methods: {
@@ -2165,12 +2152,11 @@ __webpack_require__.r(__webpack_exports__);
       } // page_url = page_url || '../api/filter/20/99/';
 
 
-      axios.get('../api/type/' + this.type + '/').then(function (response) {
+      axios.get('../api/filter/' + this.number + '/' + this.type + '/').then(function (response) {
         self.question = response.data.data;
         self.quest_id = response.data.data[self.question_key]['id'];
         self.correct_answer = response.data.data[self.question_key]['correct_answer'];
         self.quest = self.question[self.question_key]; // this.setDataForDisplay(response.data.data);
-        // console.log(response.data.data[0]['id']);
       })["catch"](function (error) {
         // handle error
         console.log(error);
@@ -2178,45 +2164,122 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     validateAnswer: function validateAnswer() {
-      this.answered_count++;
-      this.new_answer = {
-        quest_key: this.question_key,
-        id: this.quest_id,
-        answer: this.answer,
-        question: this.quest.question,
-        correct_answer: this.correct_answer,
-        correct: this.correct_answer === this.answer
-      };
-      this.answers.push(this.new_answer);
+      // Checking the answer
+      if (this.answer === this.quest['answer1']) {
+        console.log('Answer1');
+        console.log(this.answer);
+      } else if (this.answer === this.quest['answer2']) {
+        console.log('Answer2');
+      } else if (this.answer === this.quest['answer3']) {
+        console.log('Answer3');
+      } else if (this.answer === this.quest['answer4']) {
+        console.log('Answer4');
+      } else if (!this.answer) {} else {
+        window.location.replace("404");
+      }
 
-      if (this.answer === this.correct_answer) {
-        this.correct++;
+      if (this.answers[this.question_key]) {
+        //WHEN Modifying the answer
+        console.log('already answered ' + this.question_key);
+        this.answers[this.question_key]['answer'] = this.answer;
+        this.answers[this.question_key]['correct'] = this.correct_answer === this.answer;
+        this.question_key = this.answers.length;
+
+        if (this.question_key >= this.number) {
+          this.question_key = this.number;
+          console.log("yeeap triggeresd");
+        }
+      } else if (!this.answers[this.question_key] && this.question_key >= this.number) {
+        // console.log("SOmething really weaird is happening");
+        this.validate_count++;
+
+        if (this.validate_count == 10) {
+          this.results();
+        }
       } else {
-        this.incorrect++;
+        // If the answer is a new Answer
+        this.new_answer = {
+          quest_key: this.question_key,
+          id: this.quest_id,
+          answer: this.answer,
+          question: this.quest.question,
+          correct_answer: this.correct_answer,
+          correct: this.correct_answer === this.answer
+        };
+        this.answers.push(this.new_answer);
+        this.answered_count++;
+
+        if (this.question_key + 1 === this.number) {
+          this.maximum = true;
+          console.log('true');
+          console.log(this.question_key + '    ' + this.number);
+        } else {
+          console.log('false');
+          console.log(this.question_key + '    ' + this.number);
+          this.question_key++;
+        } //
+        // if (this.answer === this.correct_answer) {
+        //   this.correct ++;
+        // }else{
+        //   this.incorrect ++;
+        // }
+
       }
 
       this.answer = '';
-      this.question_key++;
-      this.maximum = this.question_key >= 20;
+      this.maximum = this.question_key + 1 >= this.number;
 
       if (!this.maximum) {
         this.quest = this.question[this.question_key];
         this.quest_id = this.question[this.question_key]['id'];
         this.correct_answer = this.question[this.question_key]['correct_answer'];
-      }
+      } // if (this.answers.length >= this.number) {
+      //   this.results();
+      // }
+
     },
     results: function results() {
       $('#modalr').modal('hide');
+      var index, len;
+
+      for (index = 0, len = this.answers.length; index < len; ++index) {
+        if (this.answers[index]['correct']) {
+          this.correct++;
+        } else {
+          this.incorrect++;
+        }
+      }
+
       this.show_results = true;
     },
     paginationStatus: function paginationStatus(n, key) {
-      if (key === n) {
-        return '';
-      } else if (key < n) {
+      if (key === n || n == this.answered_count + 1) {
+        if (n <= this.number) {
+          return 'active';
+        }
+      } else if (key < n && !this.answers[n - 1] || n > this.number) {
         return 'disabled';
-      } else if (key > n) {
-        return 'active';
+      } else if (key > n || this.answers[n - 1]) {
+        if (this.answers[n - 1]['answer']) {
+          return 'answered';
+        }
       }
+    },
+    switchToAnsweredQuestion: function switchToAnsweredQuestion(key, n) {
+      key = key + Number(n) - 1;
+
+      if (key <= this.answered_count) {
+        this.quest = this.question[key];
+        this.quest_id = this.question[key]['id'];
+        this.correct_answer = this.question[key]['correct_answer'];
+        this.answer = this.answers[key] ? this.answers[key]['answer'] : '';
+        this.question_key = key;
+      }
+    },
+    setQuestionByKey: function setQuestionByKey(key) {
+      this.quest = this.question[key];
+      this.quest_id = this.question[key]['id'];
+      this.correct_answer = this.question[key]['correct_answer'];
     }
   },
   mounted: function mounted() {
@@ -38030,10 +38093,12 @@ var render = function() {
                 _vm._v(
                   "\n          " +
                     _vm._s(
-                      _vm.question_key === 20 ? 20 : _vm.question_key + 1
+                      _vm.question_key > _vm.number
+                        ? _vm.number
+                        : _vm.question_key + 1
                     ) +
                     " of " +
-                    _vm._s(20) +
+                    _vm._s(_vm.number) +
                     "\n          "
                 ),
                 _c("div", [
@@ -38154,6 +38219,61 @@ var render = function() {
                   ]),
                   _vm._v(" "),
                   _c(
+                    "button",
+                    {
+                      staticClass: "btn justify-content-center w-100",
+                      class: "btn-outline-primary",
+                      attrs: { type: "button" },
+                      on: {
+                        click: function($event) {
+                          return _vm.validateAnswer()
+                        }
+                      }
+                    },
+                    [
+                      _vm._v(
+                        "\n              " +
+                          _vm._s("VALIDATE >>") +
+                          "\n            "
+                      )
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "button",
+                    {
+                      directives: [
+                        {
+                          name: "show",
+                          rawName: "v-show",
+                          value: _vm.maximum,
+                          expression: "maximum"
+                        }
+                      ],
+                      staticClass: "btn justify-content-center w-100",
+                      class: _vm.maximum
+                        ? "btn-outline-success"
+                        : "btn-outline-primary",
+                      attrs: { type: "button" },
+                      on: {
+                        click: function($event) {
+                          _vm.maximum ? _vm.results() : _vm.validateAnswer()
+                        }
+                      }
+                    },
+                    [
+                      _vm._v(
+                        "\n              " +
+                          _vm._s(_vm.maximum ? "SUBTMIT" : "VALIDATE >>") +
+                          "\n            "
+                      )
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _c("br"),
+                  _c("br"),
+                  _vm._v(" "),
+                  _c(
                     "nav",
                     { attrs: { "aria-label": "Page navigation example" } },
                     [
@@ -38167,7 +38287,7 @@ var render = function() {
                               staticClass: "page-item",
                               class: _vm.paginationStatus(
                                 n,
-                                _vm.question_key + 1
+                                Number(_vm.question_key) + 1
                               )
                             },
                             [
@@ -38175,7 +38295,15 @@ var render = function() {
                                 "a",
                                 {
                                   staticClass: "page-link",
-                                  attrs: { href: "#" }
+                                  attrs: { href: "#" },
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.switchToAnsweredQuestion(
+                                        n,
+                                        "0"
+                                      )
+                                    }
+                                  }
                                 },
                                 [_vm._v(_vm._s(n))]
                               )
@@ -38183,135 +38311,51 @@ var render = function() {
                           )
                         }),
                         0
-                      )
-                    ]
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "nav",
-                    { attrs: { "aria-label": "Page navigation example" } },
-                    [
-                      _c(
-                        "ul",
-                        { staticClass: "pagination justify-content-center" },
-                        _vm._l(5, function(n) {
-                          return _c(
-                            "li",
-                            {
-                              staticClass: "page-item",
-                              class: _vm.paginationStatus(
-                                n + 5,
-                                _vm.question_key + 1
-                              )
-                            },
-                            [
-                              _c(
-                                "a",
-                                {
-                                  staticClass: "page-link",
-                                  attrs: { href: "#" }
-                                },
-                                [_vm._v(_vm._s(n + 5))]
-                              )
-                            ]
-                          )
-                        }),
-                        0
-                      )
-                    ]
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "nav",
-                    { attrs: { "aria-label": "Page navigation example" } },
-                    [
-                      _c(
-                        "ul",
-                        { staticClass: "pagination justify-content-center" },
-                        _vm._l(5, function(n) {
-                          return _c(
-                            "li",
-                            {
-                              staticClass: "page-item",
-                              class: _vm.paginationStatus(
-                                n + 10,
-                                _vm.question_key + 1
-                              )
-                            },
-                            [
-                              _c(
-                                "a",
-                                {
-                                  staticClass: "page-link",
-                                  attrs: { href: "#" }
-                                },
-                                [_vm._v(_vm._s(n + 10))]
-                              )
-                            ]
-                          )
-                        }),
-                        0
-                      )
-                    ]
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "nav",
-                    { attrs: { "aria-label": "Page navigation example" } },
-                    [
-                      _c(
-                        "ul",
-                        { staticClass: "pagination justify-content-center" },
-                        _vm._l(5, function(n) {
-                          return _c(
-                            "li",
-                            {
-                              staticClass: "page-item",
-                              class: _vm.paginationStatus(
-                                n + 15,
-                                _vm.question_key + 1
-                              )
-                            },
-                            [
-                              _c(
-                                "a",
-                                {
-                                  staticClass: "page-link",
-                                  attrs: { href: "#" }
-                                },
-                                [_vm._v(_vm._s(n + 15))]
-                              )
-                            ]
-                          )
-                        }),
-                        0
-                      )
-                    ]
+                      ),
+                      _vm._v(" "),
+                      _vm._l(9, function(m) {
+                        return _c(
+                          "ul",
+                          { staticClass: "pagination justify-content-center" },
+                          _vm._l(5, function(n) {
+                            return n + 5 * m <= _vm.number
+                              ? _c(
+                                  "li",
+                                  {
+                                    staticClass: "page-item",
+                                    class: _vm.paginationStatus(
+                                      n + 5 * m,
+                                      Number(_vm.question_key) + 1
+                                    )
+                                  },
+                                  [
+                                    _c(
+                                      "a",
+                                      {
+                                        staticClass: "page-link",
+                                        attrs: { href: "#" },
+                                        on: {
+                                          click: function($event) {
+                                            return _vm.switchToAnsweredQuestion(
+                                              n,
+                                              5 * m
+                                            )
+                                          }
+                                        }
+                                      },
+                                      [_vm._v(_vm._s(n + 5 * m))]
+                                    )
+                                  ]
+                                )
+                              : _vm._e()
+                          }),
+                          0
+                        )
+                      })
+                    ],
+                    2
                   )
-                ]),
-                _vm._v(" "),
-                _c(
-                  "button",
-                  {
-                    staticClass: "btn justify-content-center w-100",
-                    class: _vm.maximum
-                      ? "btn-outline-success"
-                      : "btn-outline-primary",
-                    attrs: { type: "button" },
-                    on: {
-                      click: function($event) {
-                        _vm.maximum ? _vm.results() : _vm.validateAnswer()
-                      }
-                    }
-                  },
-                  [
-                    _vm._v(
-                      "\n            " +
-                        _vm._s(_vm.maximum ? "SUBTMIT" : "VALIDATE »>") +
-                        "\n          "
-                    )
-                  ]
-                )
+                ])
               ]),
               _vm._v(" "),
               _vm._m(2)
@@ -38372,12 +38416,6 @@ var staticRenderFns = [
           attrs: { type: "button", "data-dismiss": "modal" }
         },
         [_vm._v("QUIT")]
-      ),
-      _vm._v(" "),
-      _c(
-        "button",
-        { staticClass: "btn btn-primary", attrs: { type: "button" } },
-        [_vm._v("Save changes")]
       )
     ])
   }

@@ -20,27 +20,26 @@ class QuestionController extends Controller
         if (in_array($type, array_keys($question_m->types())) || $type == 99) {
           if (in_array($pagination, $question_m->available_pagination())) {
             if ($type == 99) {
-              $query = Question::paginate(1);
+              $questions = Question::inRAndomOrder()
+                                    ->limit($pagination)
+                                    ->get();
+
+
             }else {
-              $query = Question::where('type', $type)->paginate(1);
+              $query = Question::where('type', $type)
+                                    ->limit($pagination)
+                                    ->get();
             }
 
+            return QuestionResource::collection($questions);
 
-            return QuestionResource::collection($query);
-          }else {
-
-            return 'EROR55';
           }
-        }else {
-          return 'EROR'.$type;
-
         }
-      }else {
-        return 'Eror1';
       }
 
-      // $questions = Question::
+      return 'Something is wrong';
     }
+    
     public function getAllQuestions($limit){
       if (is_numeric($limit) && $limit < 60 ) {
         $questions = Question::limit($limit)->get();

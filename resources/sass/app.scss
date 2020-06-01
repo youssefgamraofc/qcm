@@ -82,13 +82,39 @@
   color: #7f8c8d;
   border-radius: 2% !important;
 }
-.answered{
-  background-color: #ecf0f1;
-  border-color: #1abc9c;
-  color: #1abc9c;
+
+.pagination > li > a
+{
+    background-color: white;
+    color: #5A4181;
 }
 
+.pagination > li > a:focus,
+.pagination > li > a:hover,
+.pagination > li > span:focus,
+.pagination > li > span:hover
+{
+    color: #5a5a5a;
+    background-color: #eee;
+    border-color: #ddd;
+}
 
+.pagination > .answered > a
+{
+    color: white;
+    background-color: $green !Important;
+    border: solid 1px $green !Important;
+}
+
+.pagination > .answered > a:hover
+{
+    background-color: $green !Important;
+    border: solid 1px $green;
+}
+
+.pagination > .disabled{
+  display: none;
+}
 // #modalr{
 //   height:100%;
 //   width: 100%;

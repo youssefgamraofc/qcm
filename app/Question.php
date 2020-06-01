@@ -29,6 +29,6 @@ class Question extends Model
     }
 
     public function available_pagination(){
-      return [20,40,50];
+      return [20,30,40,50];
     }
 }

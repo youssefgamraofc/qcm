@@ -74,7 +74,7 @@
               </button>
             </div>
             <div class="modal-body">
-              {{question_key === 20? 20 :  question_key +1}} of {{ 20 }}
+              {{question_key > number ? number :  question_key +1}} of {{ number }}
               <div >
                 <p>Ques {{quest.question}}</p>
                 <div class="answers">
@@ -100,54 +100,37 @@
                   </div>
                 </div>
 
+                <button type="button" class="btn justify-content-center w-100" :class="'btn-outline-primary' " @click="validateAnswer()">
+                  {{'VALIDATE &gt;&gt;'}}
+                </button>
+                <button type="button" class="btn justify-content-center w-100" v-show="maximum" :class="maximum ? 'btn-outline-success' : 'btn-outline-primary' " @click="maximum ? results() : validateAnswer()">
+                  {{maximum ? 'SUBTMIT':'VALIDATE &gt;&gt;'}}
+                </button>
+                <br><br>
 
                 <nav aria-label="Page navigation example">
                   <ul class="pagination justify-content-center">
 
-                    <li class="page-item" v-for="n in 5" :class="paginationStatus(n,question_key+1)">
-                      <a class="page-link" href="#">{{n}}</a>
+                    <li class="page-item" v-for="n in 5" :class="paginationStatus(n,Number(question_key)+1)">
+                      <a class="page-link" @click="switchToAnsweredQuestion(n,'0')" href="#">{{n}}</a>
                     </li>
 
                   </ul>
-                </nav>
-                <nav aria-label="Page navigation example">
-                  <ul class="pagination justify-content-center">
-
-                    <li class="page-item" v-for="n in 5" :class="paginationStatus(n+5,question_key+1)">
-                      <a class="page-link" href="#">{{n+5}}</a>
+                  <ul class="pagination justify-content-center" v-for="m in 9">
+                    <li class="page-item" v-for="n in 5" :class="paginationStatus(n+5*m,Number(question_key)+1)" v-if="n+5*m <= number">
+                      <a class="page-link" @click="switchToAnsweredQuestion(n,5*m)" href="#">{{n+5*m}}</a>
                     </li>
-
                   </ul>
+
                 </nav>
-                <nav aria-label="Page navigation example">
-                  <ul class="pagination justify-content-center">
 
-                    <li class="page-item" v-for="n in 5" :class="paginationStatus(n+10,question_key+1)">
-                      <a class="page-link" href="#">{{n+10}}</a>
-                    </li>
-
-                  </ul>
-                </nav>
-                <nav aria-label="Page navigation example">
-                  <ul class="pagination justify-content-center">
-
-                    <li class="page-item" v-for="n in 5"
-                      :class="paginationStatus(n+15,question_key+1)">
-                      <a class="page-link" href="#">{{n+15}}</a>
-                    </li>
-
-                  </ul>
-                </nav>
               </div>
 
-              <button type="button" class="btn justify-content-center w-100" :class="maximum ? 'btn-outline-success' : 'btn-outline-primary' " @click="maximum ? results() : validateAnswer()">
-                {{maximum ? 'SUBTMIT':'VALIDATE »>'}}
-              </button>
+
 
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">QUIT</button>
-              <button type="button" class="btn btn-primary">Save changes</button>
             </div>
           </div>
         </div>
@@ -199,6 +182,13 @@
           pagination: {},
 
           show_results: false,
+
+          // Incase the user changed their answer
+          submitted_answer: '',
+
+          // Incase the user tried to check on validate more than 10 times
+          validate_count: "0",
+
         }
       },
       methods:{
@@ -230,7 +220,7 @@
           }
            // page_url = page_url || '../api/filter/20/99/';
 
-            axios.get('../api/type/'+this.type+'/')
+            axios.get('../api/filter/'+this.number+'/'+this.type+'/')
               .then(function (response) {
 
                 self.question = response.data.data;
@@ -240,7 +230,6 @@
 
                 // this.setDataForDisplay(response.data.data);
 
-                // console.log(response.data.data[0]['id']);
 
               })
               .catch(function (error) {
@@ -255,29 +244,83 @@
         },
 
         validateAnswer(){
-          this.answered_count ++;
 
-          this.new_answer = {
-            quest_key: this.question_key,
-            id : this.quest_id,
-            answer : this.answer,
-            question: this.quest.question,
-            correct_answer: this.correct_answer,
-            correct: this.correct_answer === this.answer,
-          };
+          // Checking the answer
+          if (this.answer === this.quest['answer1']) {
+            console.log('Answer1');
+            console.log(this.answer);
+          }else if (this.answer === this.quest['answer2']) {
+            console.log('Answer2');
+          }else if (this.answer === this.quest['answer3']) {
+            console.log('Answer3');
+          }else if (this.answer === this.quest['answer4']) {
+            console.log('Answer4');
 
-          this.answers.push(this.new_answer);
+          }else if (!this.answer) {
 
-          if (this.answer === this.correct_answer) {
-            this.correct ++;
-          }else{
-            this.incorrect ++;
+          }else {
+            window.location.replace("404");
           }
+
+          if (this.answers[this.question_key]) {
+            //WHEN Modifying the answer
+
+            console.log('already answered ' + this.question_key);
+            this.answers[this.question_key]['answer'] = this.answer;
+            this.answers[this.question_key]['correct'] = this.correct_answer === this.answer;
+            this.question_key = this.answers.length;
+
+            if (this.question_key >= this.number) {
+              this.question_key  = this.number;
+              console.log("yeeap triggeresd");
+            }
+
+          }else if (!this.answers[this.question_key] && this.question_key >= this.number) {
+            // console.log("SOmething really weaird is happening");
+            this.validate_count++;
+            if (this.validate_count == 10) {
+              this.results();
+            }
+          }
+          else {
+            // If the answer is a new Answer
+
+            this.new_answer = {
+              quest_key: this.question_key,
+              id : this.quest_id,
+              answer : this.answer,
+              question: this.quest.question,
+              correct_answer: this.correct_answer,
+              correct: this.correct_answer === this.answer,
+            };
+
+            this.answers.push(this.new_answer);
+            this.answered_count ++;
+
+            if (this.question_key+1 === this.number) {
+              this.maximum = true;
+              console.log('true');
+              console.log(this.question_key+'    '+this.number);
+            }else {
+              console.log('false');
+              console.log(this.question_key+'    '+this.number);
+
+              this.question_key ++;
+
+            }
+
+            //
+            // if (this.answer === this.correct_answer) {
+            //   this.correct ++;
+            // }else{
+            //   this.incorrect ++;
+            // }
+          }
+
 
           this.answer = '';
 
-          this.question_key ++;
-          this.maximum = this.question_key >= 20;
+          this.maximum = this.question_key+1 >= this.number;
 
           if (!this.maximum) {
             this.quest = this.question[this.question_key];
@@ -285,20 +328,62 @@
             this.correct_answer = this.question[this.question_key]['correct_answer'];
           }
 
+          // if (this.answers.length >= this.number) {
+          //   this.results();
+          // }
+
 
         },
         results(){
           $('#modalr').modal('hide');
+
+          var index, len;
+          for (index = 0, len = this.answers.length; index < len; ++index) {
+            if (this.answers[index]['correct']) {
+              this.correct ++;
+            }else {
+              this.incorrect ++;
+            }
+          }
+
           this.show_results = true;
+
+
         },
         paginationStatus(n, key){
-          if (key === n ) {
-            return '';
-          }else if (key < n) {
+          if (key === n || n == this.answered_count+1) {
+            if (n <= this.number) {
+              return 'active';
+            }
+          }else if (key < n && !this.answers[n-1] || n > this.number) {
             return 'disabled';
-          }else if (key > n) {
-            return 'active';
+          }else if (key > n || this.answers[n-1]) {
+            if (this.answers[n-1]['answer'] ) {
+              return 'answered';
+            }
           }
+
+
+
+        },
+        switchToAnsweredQuestion(key, n){
+
+          key = key + Number(n) - 1;
+          if (key <= this.answered_count) {
+
+            this.quest = this.question[key];
+            this.quest_id = this.question[key]['id'];
+            this.correct_answer = this.question[key]['correct_answer'];
+            this.answer = this.answers[key] ? this.answers[key]['answer'] : '';
+            this.question_key = key;
+          }
+
+        },
+
+        setQuestionByKey(key){
+          this.quest = this.question[key];
+          this.quest_id = this.question[key]['id'];
+          this.correct_answer = this.question[key]['correct_answer'];
         }
 
       },
