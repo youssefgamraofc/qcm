@@ -1,33 +1,57 @@
 <template>
     <div class="container">
-      <div class="card">
-          <div class="card-header text-center h2">Start Now</div>
+      <div class="wrapper">
+          <div class="card-header text-center">
+            <div v-show="show_results">
 
-          <div class="card-body p-5">
-            <div class="" v-show="show_results">
-              <p>Correct Answers: {{correct}}</p>
-              <p>Incorrect Answers: {{incorrect}}</p>
+            <h3>Results</h3>
+            <a href="#" @click="newQuiz">
+              <h6>
+                Start new Quiz
+              </h6>
+            </a>
+
+            </div>
+
+            <h3 v-show="!show_results">QCM Maroc</h3>
+          </div>
+
+          <div class="card-body">
+            <div class="results" v-show="show_results">
+              <div class="row">
+                <div class="col-md-6">
+                  <p>Correct Answers: {{correct}}</p>
+                  <p>Incorrect Answers: {{incorrect}}</p>
+                </div>
+                <div class="col-md-6">
+                  <p class="percentage" :class="correct_percentage >= 50 ? 'text-success':'text-warning'">{{correct_percentage}} <span>%</span> </p>
+                </div>
+              </div>
               <table class="table table-hover">
                 <thead>
                   <tr>
                     <th scope="col">Question</th>
                     <th scope="col">Your answer</th>
                     <th scope="col">Correct Answer</th>
+                    <th></th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr v-for="(value, key) in answers" :class="value.answer === value.correct_answer? 'bg-success': 'bg-warning'">
-                    <th scope="row">{{value.question}}</th>
-                    <td>{{value.answer}}</td>
-                    <td>{{value.correct_answer}}</td>
+                    <th class="question-field">{{value.question}}</th>
+                    <td class="answer-field">{{value.answer}}</td>
+                    <td class="correct-answer-field">{{value.correct_answer}}</td>
+                    <td class="report-field">
+                      <button type="button" class="btn btn-sm btn-outline-secondary" name="button">Report</button>
+                    </td>
 
                   </tr>
                 </tbody>
               </table>
             </div>
-            <div v-show="!show_results" class="row">
+            <div v-show="!show_results" class="row selection-wrapper">
               <div class="col-md-6">
-                <h3>Select a type please</h3>
+                <h3>Select a type</h3>
                 <div class="radio-toolbar-type ">
                   <div class="row">
                     <input  type="radio" id="radio2099" v-model="type" value="99">
@@ -41,7 +65,7 @@
                 </div>
               </div>
 
-              <div class="col-md-6">
+              <div class="col-md-6 number-questions">
                 <h3>How many questions</h3>
                 <div class="radio-toolbar-number">
                   <div class="row">
@@ -68,39 +92,45 @@
         <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" id="modalrTitle">Modal title</h5>
+              <h3 class="col-12 modal-title text-center" id="modalrTitle"> {{quest.question}}</h3>
+
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
             <div class="modal-body">
-              {{question_key > number ? number :  question_key +1}} of {{ number }}
-              <div >
-                <p>Ques {{quest.question}}</p>
+              <p class="paginate float-left">
+                {{question_key > number ? number :  question_key +1}} of {{ number }}
+              </p>
+              <button type="button" class="btn btn-sm btn-outline-secondary float-right" name="button">Report</button>
+
+              <div class="question-wrapper">
                 <div class="answers">
                   <div class="radio-toolbar-type ">
                     <div class="row">
-                      <div class="mr-2">
-                        <input type="radio" :id="'answer1'" v-model="answer" v-bind:value="quest.answer1" >
-                        <label :for="'answer1'">{{quest.answer1}}</label>
-                      </div>
-                      <div class="mr-2">
-                        <input type="radio" :id="'answer2'" v-model="answer" v-bind:value="quest.answer2" >
-                        <label :for="'answer2'">{{quest.answer2}}</label>
-                      </div>
-                      <div class="mr-2">
-                        <input type="radio" :id="'answer3'" v-model="answer" v-bind:value="quest.answer3" >
-                        <label :for="'answer3'">{{quest.answer3}}</label>
-                      </div>
-                      <div class="mr-2">
-                        <input type="radio" :id="'answer4'" v-model="answer" v-bind:value="quest.answer4" >
-                        <label :for="'answer4'">{{quest.answer4}}</label>
+                      <div class="col text-center">
+                        <div class="mr-2">
+                          <input type="radio" :id="'answer1'" v-model="answer" v-bind:value="quest.answer1" >
+                          <label :for="'answer1'">{{quest.answer1}}</label>
+                        </div>
+                        <div class="mr-2">
+                          <input type="radio" :id="'answer2'" v-model="answer" v-bind:value="quest.answer2" >
+                          <label :for="'answer2'">{{quest.answer2}}</label>
+                        </div>
+                        <div class="mr-2">
+                          <input type="radio" :id="'answer3'" v-model="answer" v-bind:value="quest.answer3" >
+                          <label :for="'answer3'">{{quest.answer3}}</label>
+                        </div>
+                        <div class="mr-2">
+                          <input type="radio" :id="'answer4'" v-model="answer" v-bind:value="quest.answer4" >
+                          <label :for="'answer4'">{{quest.answer4}}</label>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <button type="button" class="btn justify-content-center w-100" :class="'btn-outline-primary' " @click="validateAnswer()">
+                <button type="button" class="btn justify-content-center w-100 validation-button" :class="'btn-outline-primary' " @click="validateAnswer()">
                   {{'VALIDATE &gt;&gt;'}}
                 </button>
                 <button type="button" class="btn justify-content-center w-100" v-show="maximum" :class="maximum ? 'btn-outline-success' : 'btn-outline-primary' " @click="maximum ? results() : validateAnswer()">
@@ -188,6 +218,8 @@
 
           // Incase the user tried to check on validate more than 10 times
           validate_count: "0",
+
+          correct_percentage: '',
 
         }
       },
@@ -297,40 +329,19 @@
             this.answers.push(this.new_answer);
             this.answered_count ++;
 
-            if (this.question_key+1 === this.number) {
-              this.maximum = true;
-              console.log('true');
-              console.log(this.question_key+'    '+this.number);
-            }else {
-              console.log('false');
-              console.log(this.question_key+'    '+this.number);
 
-              this.question_key ++;
-
-            }
-
-            //
-            // if (this.answer === this.correct_answer) {
-            //   this.correct ++;
-            // }else{
-            //   this.incorrect ++;
-            // }
+            // If the user reach the last question then set maximum to true
+            this.question_key+1 >=  Number(this.number) ? this.maximum = true : this.question_key ++;
           }
 
 
           this.answer = '';
-
-          this.maximum = this.question_key+1 >= this.number;
 
           if (!this.maximum) {
             this.quest = this.question[this.question_key];
             this.quest_id = this.question[this.question_key]['id'];
             this.correct_answer = this.question[this.question_key]['correct_answer'];
           }
-
-          // if (this.answers.length >= this.number) {
-          //   this.results();
-          // }
 
 
         },
@@ -346,6 +357,7 @@
             }
           }
 
+          this.correct_percentage = this.correct * 100 / this.number;
           this.show_results = true;
 
 
@@ -384,6 +396,9 @@
           this.quest = this.question[key];
           this.quest_id = this.question[key]['id'];
           this.correct_answer = this.question[key]['correct_answer'];
+        },
+        newQuiz(){
+          window.location.reload();
         }
 
       },

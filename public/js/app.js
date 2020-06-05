@@ -2082,6 +2082,36 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 // I couldnot find a way to limit and paginate
 // therefor im going to use vue to check if the user has reached the number of quesiton that they want
 // E.G if(answered_questions_count == number) then the next button should be disabled
@@ -2118,7 +2148,8 @@ __webpack_require__.r(__webpack_exports__);
       // Incase the user changed their answer
       submitted_answer: '',
       // Incase the user tried to check on validate more than 10 times
-      validate_count: "0"
+      validate_count: "0",
+      correct_percentage: ''
     };
   },
   methods: {
@@ -2207,36 +2238,18 @@ __webpack_require__.r(__webpack_exports__);
           correct: this.correct_answer === this.answer
         };
         this.answers.push(this.new_answer);
-        this.answered_count++;
+        this.answered_count++; // If the user reach the last question then set maximum to true
 
-        if (this.question_key + 1 === this.number) {
-          this.maximum = true;
-          console.log('true');
-          console.log(this.question_key + '    ' + this.number);
-        } else {
-          console.log('false');
-          console.log(this.question_key + '    ' + this.number);
-          this.question_key++;
-        } //
-        // if (this.answer === this.correct_answer) {
-        //   this.correct ++;
-        // }else{
-        //   this.incorrect ++;
-        // }
-
+        this.question_key + 1 >= Number(this.number) ? this.maximum = true : this.question_key++;
       }
 
       this.answer = '';
-      this.maximum = this.question_key + 1 >= this.number;
 
       if (!this.maximum) {
         this.quest = this.question[this.question_key];
         this.quest_id = this.question[this.question_key]['id'];
         this.correct_answer = this.question[this.question_key]['correct_answer'];
-      } // if (this.answers.length >= this.number) {
-      //   this.results();
-      // }
-
+      }
     },
     results: function results() {
       $('#modalr').modal('hide');
@@ -2250,6 +2263,7 @@ __webpack_require__.r(__webpack_exports__);
         }
       }
 
+      this.correct_percentage = this.correct * 100 / this.number;
       this.show_results = true;
     },
     paginationStatus: function paginationStatus(n, key) {
@@ -2280,6 +2294,9 @@ __webpack_require__.r(__webpack_exports__);
       this.quest = this.question[key];
       this.quest_id = this.question[key]['id'];
       this.correct_answer = this.question[key]['correct_answer'];
+    },
+    newQuiz: function newQuiz() {
+      window.location.reload();
     }
   },
   mounted: function mounted() {
@@ -37880,12 +37897,8 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "container" }, [
-    _c("div", { staticClass: "card" }, [
-      _c("div", { staticClass: "card-header text-center h2" }, [
-        _vm._v("Start Now")
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "card-body p-5" }, [
+    _c("div", { staticClass: "wrapper" }, [
+      _c("div", { staticClass: "card-header text-center" }, [
         _c(
           "div",
           {
@@ -37899,9 +37912,69 @@ var render = function() {
             ]
           },
           [
-            _c("p", [_vm._v("Correct Answers: " + _vm._s(_vm.correct))]),
+            _c("h3", [_vm._v("Results")]),
             _vm._v(" "),
-            _c("p", [_vm._v("Incorrect Answers: " + _vm._s(_vm.incorrect))]),
+            _c("a", { attrs: { href: "#" }, on: { click: _vm.newQuiz } }, [
+              _c("h6", [_vm._v("\n            Start new Quiz\n          ")])
+            ])
+          ]
+        ),
+        _vm._v(" "),
+        _c(
+          "h3",
+          {
+            directives: [
+              {
+                name: "show",
+                rawName: "v-show",
+                value: !_vm.show_results,
+                expression: "!show_results"
+              }
+            ]
+          },
+          [_vm._v("QCM Maroc")]
+        )
+      ]),
+      _vm._v(" "),
+      _c("div", { staticClass: "card-body" }, [
+        _c(
+          "div",
+          {
+            directives: [
+              {
+                name: "show",
+                rawName: "v-show",
+                value: _vm.show_results,
+                expression: "show_results"
+              }
+            ],
+            staticClass: "results"
+          },
+          [
+            _c("div", { staticClass: "row" }, [
+              _c("div", { staticClass: "col-md-6" }, [
+                _c("p", [_vm._v("Correct Answers: " + _vm._s(_vm.correct))]),
+                _vm._v(" "),
+                _c("p", [_vm._v("Incorrect Answers: " + _vm._s(_vm.incorrect))])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "col-md-6" }, [
+                _c(
+                  "p",
+                  {
+                    staticClass: "percentage",
+                    class:
+                      _vm.correct_percentage >= 50
+                        ? "text-success"
+                        : "text-warning"
+                  },
+                  [
+                    _vm._v(_vm._s(_vm.correct_percentage) + " "),
+                    _c("span", [_vm._v("%")])
+                  ]
+                )
+              ])
+            ]),
             _vm._v(" "),
             _c("table", { staticClass: "table table-hover" }, [
               _vm._m(0),
@@ -37918,13 +37991,19 @@ var render = function() {
                           : "bg-warning"
                     },
                     [
-                      _c("th", { attrs: { scope: "row" } }, [
+                      _c("th", { staticClass: "question-field" }, [
                         _vm._v(_vm._s(value.question))
                       ]),
                       _vm._v(" "),
-                      _c("td", [_vm._v(_vm._s(value.answer))]),
+                      _c("td", { staticClass: "answer-field" }, [
+                        _vm._v(_vm._s(value.answer))
+                      ]),
                       _vm._v(" "),
-                      _c("td", [_vm._v(_vm._s(value.correct_answer))])
+                      _c("td", { staticClass: "correct-answer-field" }, [
+                        _vm._v(_vm._s(value.correct_answer))
+                      ]),
+                      _vm._v(" "),
+                      _vm._m(1, true)
                     ]
                   )
                 }),
@@ -37945,11 +38024,11 @@ var render = function() {
                 expression: "!show_results"
               }
             ],
-            staticClass: "row"
+            staticClass: "row selection-wrapper"
           },
           [
             _c("div", { staticClass: "col-md-6" }, [
-              _c("h3", [_vm._v("Select a type please")]),
+              _c("h3", [_vm._v("Select a type")]),
               _vm._v(" "),
               _c("div", { staticClass: "radio-toolbar-type " }, [
                 _c(
@@ -38012,7 +38091,7 @@ var render = function() {
               ])
             ]),
             _vm._v(" "),
-            _c("div", { staticClass: "col-md-6" }, [
+            _c("div", { staticClass: "col-md-6 number-questions" }, [
               _c("h3", [_vm._v("How many questions")]),
               _vm._v(" "),
               _c("div", { staticClass: "radio-toolbar-number" }, [
@@ -38087,131 +38166,154 @@ var render = function() {
           },
           [
             _c("div", { staticClass: "modal-content" }, [
-              _vm._m(1),
+              _c("div", { staticClass: "modal-header" }, [
+                _c(
+                  "h3",
+                  {
+                    staticClass: "col-12 modal-title text-center",
+                    attrs: { id: "modalrTitle" }
+                  },
+                  [_vm._v(" " + _vm._s(_vm.quest.question))]
+                ),
+                _vm._v(" "),
+                _vm._m(2)
+              ]),
               _vm._v(" "),
               _c("div", { staticClass: "modal-body" }, [
-                _vm._v(
-                  "\n          " +
-                    _vm._s(
-                      _vm.question_key > _vm.number
-                        ? _vm.number
-                        : _vm.question_key + 1
-                    ) +
-                    " of " +
-                    _vm._s(_vm.number) +
-                    "\n          "
+                _c("p", { staticClass: "paginate float-left" }, [
+                  _vm._v(
+                    "\n            " +
+                      _vm._s(
+                        _vm.question_key > _vm.number
+                          ? _vm.number
+                          : _vm.question_key + 1
+                      ) +
+                      " of " +
+                      _vm._s(_vm.number) +
+                      "\n          "
+                  )
+                ]),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-sm btn-outline-secondary float-right",
+                    attrs: { type: "button", name: "button" }
+                  },
+                  [_vm._v("Report")]
                 ),
-                _c("div", [
-                  _c("p", [_vm._v("Ques " + _vm._s(_vm.quest.question))]),
-                  _vm._v(" "),
+                _vm._v(" "),
+                _c("div", { staticClass: "question-wrapper" }, [
                   _c("div", { staticClass: "answers" }, [
                     _c("div", { staticClass: "radio-toolbar-type " }, [
                       _c("div", { staticClass: "row" }, [
-                        _c("div", { staticClass: "mr-2" }, [
-                          _c("input", {
-                            directives: [
-                              {
-                                name: "model",
-                                rawName: "v-model",
-                                value: _vm.answer,
-                                expression: "answer"
+                        _c("div", { staticClass: "col text-center" }, [
+                          _c("div", { staticClass: "mr-2" }, [
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.answer,
+                                  expression: "answer"
+                                }
+                              ],
+                              attrs: { type: "radio", id: "answer1" },
+                              domProps: {
+                                value: _vm.quest.answer1,
+                                checked: _vm._q(_vm.answer, _vm.quest.answer1)
+                              },
+                              on: {
+                                change: function($event) {
+                                  _vm.answer = _vm.quest.answer1
+                                }
                               }
-                            ],
-                            attrs: { type: "radio", id: "answer1" },
-                            domProps: {
-                              value: _vm.quest.answer1,
-                              checked: _vm._q(_vm.answer, _vm.quest.answer1)
-                            },
-                            on: {
-                              change: function($event) {
-                                _vm.answer = _vm.quest.answer1
-                              }
-                            }
-                          }),
+                            }),
+                            _vm._v(" "),
+                            _c("label", { attrs: { for: "answer1" } }, [
+                              _vm._v(_vm._s(_vm.quest.answer1))
+                            ])
+                          ]),
                           _vm._v(" "),
-                          _c("label", { attrs: { for: "answer1" } }, [
-                            _vm._v(_vm._s(_vm.quest.answer1))
-                          ])
-                        ]),
-                        _vm._v(" "),
-                        _c("div", { staticClass: "mr-2" }, [
-                          _c("input", {
-                            directives: [
-                              {
-                                name: "model",
-                                rawName: "v-model",
-                                value: _vm.answer,
-                                expression: "answer"
+                          _c("div", { staticClass: "mr-2" }, [
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.answer,
+                                  expression: "answer"
+                                }
+                              ],
+                              attrs: { type: "radio", id: "answer2" },
+                              domProps: {
+                                value: _vm.quest.answer2,
+                                checked: _vm._q(_vm.answer, _vm.quest.answer2)
+                              },
+                              on: {
+                                change: function($event) {
+                                  _vm.answer = _vm.quest.answer2
+                                }
                               }
-                            ],
-                            attrs: { type: "radio", id: "answer2" },
-                            domProps: {
-                              value: _vm.quest.answer2,
-                              checked: _vm._q(_vm.answer, _vm.quest.answer2)
-                            },
-                            on: {
-                              change: function($event) {
-                                _vm.answer = _vm.quest.answer2
-                              }
-                            }
-                          }),
+                            }),
+                            _vm._v(" "),
+                            _c("label", { attrs: { for: "answer2" } }, [
+                              _vm._v(_vm._s(_vm.quest.answer2))
+                            ])
+                          ]),
                           _vm._v(" "),
-                          _c("label", { attrs: { for: "answer2" } }, [
-                            _vm._v(_vm._s(_vm.quest.answer2))
-                          ])
-                        ]),
-                        _vm._v(" "),
-                        _c("div", { staticClass: "mr-2" }, [
-                          _c("input", {
-                            directives: [
-                              {
-                                name: "model",
-                                rawName: "v-model",
-                                value: _vm.answer,
-                                expression: "answer"
+                          _c("div", { staticClass: "mr-2" }, [
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.answer,
+                                  expression: "answer"
+                                }
+                              ],
+                              attrs: { type: "radio", id: "answer3" },
+                              domProps: {
+                                value: _vm.quest.answer3,
+                                checked: _vm._q(_vm.answer, _vm.quest.answer3)
+                              },
+                              on: {
+                                change: function($event) {
+                                  _vm.answer = _vm.quest.answer3
+                                }
                               }
-                            ],
-                            attrs: { type: "radio", id: "answer3" },
-                            domProps: {
-                              value: _vm.quest.answer3,
-                              checked: _vm._q(_vm.answer, _vm.quest.answer3)
-                            },
-                            on: {
-                              change: function($event) {
-                                _vm.answer = _vm.quest.answer3
-                              }
-                            }
-                          }),
+                            }),
+                            _vm._v(" "),
+                            _c("label", { attrs: { for: "answer3" } }, [
+                              _vm._v(_vm._s(_vm.quest.answer3))
+                            ])
+                          ]),
                           _vm._v(" "),
-                          _c("label", { attrs: { for: "answer3" } }, [
-                            _vm._v(_vm._s(_vm.quest.answer3))
-                          ])
-                        ]),
-                        _vm._v(" "),
-                        _c("div", { staticClass: "mr-2" }, [
-                          _c("input", {
-                            directives: [
-                              {
-                                name: "model",
-                                rawName: "v-model",
-                                value: _vm.answer,
-                                expression: "answer"
+                          _c("div", { staticClass: "mr-2" }, [
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.answer,
+                                  expression: "answer"
+                                }
+                              ],
+                              attrs: { type: "radio", id: "answer4" },
+                              domProps: {
+                                value: _vm.quest.answer4,
+                                checked: _vm._q(_vm.answer, _vm.quest.answer4)
+                              },
+                              on: {
+                                change: function($event) {
+                                  _vm.answer = _vm.quest.answer4
+                                }
                               }
-                            ],
-                            attrs: { type: "radio", id: "answer4" },
-                            domProps: {
-                              value: _vm.quest.answer4,
-                              checked: _vm._q(_vm.answer, _vm.quest.answer4)
-                            },
-                            on: {
-                              change: function($event) {
-                                _vm.answer = _vm.quest.answer4
-                              }
-                            }
-                          }),
-                          _vm._v(" "),
-                          _c("label", { attrs: { for: "answer4" } }, [
-                            _vm._v(_vm._s(_vm.quest.answer4))
+                            }),
+                            _vm._v(" "),
+                            _c("label", { attrs: { for: "answer4" } }, [
+                              _vm._v(_vm._s(_vm.quest.answer4))
+                            ])
                           ])
                         ])
                       ])
@@ -38221,7 +38323,8 @@ var render = function() {
                   _c(
                     "button",
                     {
-                      staticClass: "btn justify-content-center w-100",
+                      staticClass:
+                        "btn justify-content-center w-100 validation-button",
                       class: "btn-outline-primary",
                       attrs: { type: "button" },
                       on: {
@@ -38358,7 +38461,7 @@ var render = function() {
                 ])
               ]),
               _vm._v(" "),
-              _vm._m(2)
+              _vm._m(3)
             ])
           ]
         )
@@ -38377,7 +38480,9 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", { attrs: { scope: "col" } }, [_vm._v("Your answer")]),
         _vm._v(" "),
-        _c("th", { attrs: { scope: "col" } }, [_vm._v("Correct Answer")])
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Correct Answer")]),
+        _vm._v(" "),
+        _c("th")
       ])
     ])
   },
@@ -38385,24 +38490,33 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "modal-header" }, [
-      _c("h5", { staticClass: "modal-title", attrs: { id: "modalrTitle" } }, [
-        _vm._v("Modal title")
-      ]),
-      _vm._v(" "),
+    return _c("td", { staticClass: "report-field" }, [
       _c(
         "button",
         {
-          staticClass: "close",
-          attrs: {
-            type: "button",
-            "data-dismiss": "modal",
-            "aria-label": "Close"
-          }
+          staticClass: "btn btn-sm btn-outline-secondary",
+          attrs: { type: "button", name: "button" }
         },
-        [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+        [_vm._v("Report")]
       )
     ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "button",
+      {
+        staticClass: "close",
+        attrs: {
+          type: "button",
+          "data-dismiss": "modal",
+          "aria-label": "Close"
+        }
+      },
+      [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+    )
   },
   function() {
     var _vm = this

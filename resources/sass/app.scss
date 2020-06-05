@@ -11,6 +11,17 @@
   font-size: 18px;
 }
 
+.wrapper{
+  border: 1px solid rgba(44, 62, 80, 0.45);
+  border-radius: 10px;
+}
+.selection-wrapper{
+  padding: 0 14px;
+  button, .number-questions{
+    margin-top: 20px;
+  }
+}
+
 .add-form{
   font-size: 22px;
 }
@@ -115,8 +126,32 @@
 .pagination > .disabled{
   display: none;
 }
-// #modalr{
-//   height:100%;
-//   width: 100%;
-//
-// }
+
+.results{
+  .percentage{
+    font-size: 60px;
+  }
+  .table{
+    .answer-field ,.question-field , .correct-answer-field{
+      font-size: 20px;
+    }
+  }
+}
+
+.modal{
+  .question-wrapper{
+
+  }
+  .modal-title{
+    text-align: center;
+  }
+  .validation-button{
+    margin: 15px 0;
+  }
+
+}
+
+
+@media (min-width: 375px) {
+
+}
