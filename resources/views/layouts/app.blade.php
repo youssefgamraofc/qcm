@@ -63,6 +63,9 @@
                         <a href="{{action('QuestionController@validated')}}" class="dropdown-item">
                           Validated Quest
                         </a>
+                        <a href="{{action('QuestionController@reported')}}" class="dropdown-item">
+                          Reported Quest
+                        </a>
                         <a class="dropdown-item" href="{{ route('logout') }}"
                            onclick="event.preventDefault();
                                          document.getElementById('logout-form').submit();">

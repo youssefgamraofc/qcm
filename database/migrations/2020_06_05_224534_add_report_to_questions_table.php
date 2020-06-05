@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddValidatedToQuestionsTable extends Migration
+class AddReportToQuestionsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,7 @@ class AddValidatedToQuestionsTable extends Migration
     public function up()
     {
         Schema::table('questions', function (Blueprint $table) {
-          $table->tinyInteger('validated')->default('0')->after('type');
+          $table->tinyInteger('reported')->default('0')->after('type');
         });
     }
 

@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Route;
 
 Auth::routes(['register' => false]);
 
+Route::get('/questions/reported', 'QuestionController@reported')->name('questions.reported');
 Route::get('/', 'HomeController@index')->name('home');
 Route::get('/home', 'HomeController@index');
 Route::get('/questions/create', 'QuestionController@create')->middleware('auth')->name('questions.create');
@@ -28,3 +29,4 @@ Route::patch('questions/invalidate/{id}', 'QuestionController@invalidate_quest')
 Route::get('questions/edit/{id}', 'QuestionController@edit')->name('edit');
 Route::patch('questions/edit/{id}', 'QuestionController@update');
 Route::delete('questions/delete/{id}', 'QuestionController@destroy')->name('delete');
+Route::get('/questions/type/{id}', 'QuestionController@questionsByType')->name('questions.type');

@@ -24,3 +24,4 @@ Route::get('question/{id}', 'Api\QuestionController@show');
 Route::get('filter/{pagination}/{type}', 'Api\QuestionController@filter');
 Route::get('types', 'Api\QuestionController@showTypes');
 Route::get('type/{id}', 'Api\QuestionController@getQuestionsByType');
+Route::put('report/{id}', 'Api\QuestionController@report');

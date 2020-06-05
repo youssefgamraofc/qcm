@@ -42,7 +42,7 @@
                     <td class="answer-field">{{value.answer}}</td>
                     <td class="correct-answer-field">{{value.correct_answer}}</td>
                     <td class="report-field">
-                      <button type="button" class="btn btn-sm btn-outline-secondary" name="button">Report</button>
+                      <button type="button" class="btn btn-sm btn-outline-secondary" name="button" @click="reportQuestion(value.id)">Report</button>
                     </td>
 
                   </tr>
@@ -102,7 +102,7 @@
               <p class="paginate float-left">
                 {{question_key > number ? number :  question_key +1}} of {{ number }}
               </p>
-              <button type="button" class="btn btn-sm btn-outline-secondary float-right" name="button">Report</button>
+              <button type="button" class="btn btn-sm btn-outline-secondary float-right" name="button" @click="reportQuestion(quest.id)">Report</button>
 
               <div class="question-wrapper">
                 <div class="answers">
@@ -399,6 +399,27 @@
         },
         newQuiz(){
           window.location.reload();
+        },
+        reportQuestion(id){
+          this.validate_count++;
+
+          if (this.validate_count++ === 10) {
+            window.location.replace("404");
+          }
+          
+          axios({
+            method: 'put',
+            url: '../api/report/'+id+'/',
+            data: {
+              report: 'true',
+            }
+          })
+          .then(function (response) {
+            console.log(response);
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
         }
 
       },

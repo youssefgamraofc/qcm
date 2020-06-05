@@ -2,14 +2,18 @@
 
 @section('content')
 <div class="container" id="question-shoow">
-  <h3 class="text-center">All Questions {{$count_q}}</h3>
+  <h3 class="text-center">
+    {{$question_m->types($questions[1]->type)}}
+    ( {{$question_m->countQuestionsByType($questions[1]->type)}} )
+  </h3>
   <br>
   <div class="d-inline p-2">
 
     @foreach($question_m->types() as $key => $value)
       <a href="{{action('QuestionController@questionsByType', $key)}}" class="ml-5">
+
         {{$value}}
-        {{$question_m->countQuestionsByType($key)}}
+        ( {{$question_m->countQuestionsByType($key)}} )
       </a>
 
     @endforeach

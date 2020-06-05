@@ -2297,6 +2297,25 @@ __webpack_require__.r(__webpack_exports__);
     },
     newQuiz: function newQuiz() {
       window.location.reload();
+    },
+    reportQuestion: function reportQuestion(id) {
+      this.validate_count++;
+
+      if (this.validate_count++ === 10) {
+        window.location.replace("404");
+      }
+
+      axios({
+        method: 'put',
+        url: '../api/report/' + id + '/',
+        data: {
+          report: 'true'
+        }
+      }).then(function (response) {
+        console.log(response);
+      })["catch"](function (error) {
+        console.log(error);
+      });
     }
   },
   mounted: function mounted() {
@@ -38003,7 +38022,21 @@ var render = function() {
                         _vm._v(_vm._s(value.correct_answer))
                       ]),
                       _vm._v(" "),
-                      _vm._m(1, true)
+                      _c("td", { staticClass: "report-field" }, [
+                        _c(
+                          "button",
+                          {
+                            staticClass: "btn btn-sm btn-outline-secondary",
+                            attrs: { type: "button", name: "button" },
+                            on: {
+                              click: function($event) {
+                                return _vm.reportQuestion(value.id)
+                              }
+                            }
+                          },
+                          [_vm._v("Report")]
+                        )
+                      ])
                     ]
                   )
                 }),
@@ -38176,7 +38209,7 @@ var render = function() {
                   [_vm._v(" " + _vm._s(_vm.quest.question))]
                 ),
                 _vm._v(" "),
-                _vm._m(2)
+                _vm._m(1)
               ]),
               _vm._v(" "),
               _c("div", { staticClass: "modal-body" }, [
@@ -38198,7 +38231,12 @@ var render = function() {
                   "button",
                   {
                     staticClass: "btn btn-sm btn-outline-secondary float-right",
-                    attrs: { type: "button", name: "button" }
+                    attrs: { type: "button", name: "button" },
+                    on: {
+                      click: function($event) {
+                        return _vm.reportQuestion(_vm.quest.id)
+                      }
+                    }
                   },
                   [_vm._v("Report")]
                 ),
@@ -38461,7 +38499,7 @@ var render = function() {
                 ])
               ]),
               _vm._v(" "),
-              _vm._m(3)
+              _vm._m(2)
             ])
           ]
         )
@@ -38484,21 +38522,6 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th")
       ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("td", { staticClass: "report-field" }, [
-      _c(
-        "button",
-        {
-          staticClass: "btn btn-sm btn-outline-secondary",
-          attrs: { type: "button", name: "button" }
-        },
-        [_vm._v("Report")]
-      )
     ])
   },
   function() {

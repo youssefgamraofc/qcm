@@ -21,12 +21,12 @@ class QuestionController extends Controller
           if (in_array($pagination, $question_m->available_pagination())) {
             if ($type == 99) {
               $questions = Question::inRAndomOrder()
+                                    ->where('validated', '1')
                                     ->limit($pagination)
                                     ->get();
-
-
             }else {
               $query = Question::where('type', $type)
+                                    ->where('validated', '1')
                                     ->limit($pagination)
                                     ->get();
             }
@@ -39,7 +39,7 @@ class QuestionController extends Controller
 
       return 'Something is wrong';
     }
-    
+
     public function getAllQuestions($limit){
       if (is_numeric($limit) && $limit < 60 ) {
         $questions = Question::limit($limit)->get();
@@ -86,6 +86,19 @@ class QuestionController extends Controller
                     'types' => $question_m->types(),
                     'available_pagination' => $question_m->available_pagination(),
                   ]);
+
+    }
+
+    public function report($id){
+      $question = Question::findOrFail($id);
+
+      $report_number = $question['report']+1;
+      //
+      $data = ['reported' => $report_number];
+      //
+      $question->update($data);
+
+      return 'succeessss'.$report_number;
 
     }
 }

@@ -21,8 +21,39 @@ class QuestionController extends Controller
 
       return view('questions.index',[
         'questions' => $questions,
-        'types' => $question_m->types(),
+        'question_m' => $question_m,
         'count_q' => $count,
+      ]);
+    }
+
+    public function questionsByType($id){
+      $question_m = new Question();
+
+      if ($question_m->types($id)) {
+        $questions = $question_m ->getQuestionsByType($id);
+
+        return view('questions.type',[
+          'questions' => $questions,
+          'question_m' => $question_m,
+        ]);
+
+      }
+
+      return abort(404);
+    }
+
+    public function reported(){
+      $question_m = new Question();
+      
+
+      $questions = Question::where('reported' ,'1')
+                              ->inRandomOrder()
+                              ->paginate(20);
+
+      return view('questions.reported',[
+        'questions' => $questions,
+        'question_m' => $question_m,
+
       ]);
     }
 
