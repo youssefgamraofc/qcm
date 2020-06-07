@@ -8,6 +8,41 @@ require('./bootstrap');
 
 window.Vue = require('vue');
 
+import swal from 'sweetalert2';
+window.swal = swal;
+
+const toast = swal.mixin({
+  toast: true,
+  position: 'top-end',
+  showConfirmButton: false,
+  timer: 3000,
+  timerProgressBar: true,
+  onOpen: (toast) => {
+    toast.addEventListener('mouseenter', swal.stopTimer)
+    toast.addEventListener('mouseleave', swal.resumeTimer)
+  }
+});
+
+const confirmationQuit = swal.mixin({
+  customClass: {
+    confirmButton: 'btn btn-secondary btn-lg ml-3',
+    cancelButton: 'btn btn-info btn-lg'
+  },
+  buttonsStyling: false
+})
+
+
+import VueProgressBar from 'vue-progressbar'
+
+Vue.use(VueProgressBar, {
+  color: 'rgb(143, 255, 199)',
+  failedColor: 'red',
+  height: '2px'
+})
+
+window.toast = toast;
+window.confirmationQuit = confirmationQuit;
+
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue

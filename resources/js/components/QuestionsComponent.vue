@@ -160,7 +160,7 @@
 
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">QUIT</button>
+              <button type="button" class="btn btn-secondary" @click="closeModal">QUIT</button>
             </div>
           </div>
         </div>
@@ -235,6 +235,8 @@
             .catch(err => console.log(err));
         },
         openModal(){
+          this.$Progress.start();
+
           $('#modalr').modal('show');
           this.answered_count = "0";
           this.answers = [];
@@ -242,6 +244,8 @@
           this.question_key = "0";
           this.incorrect = "0";
           this.fetchQuestion();
+          this.$Progress.finish();
+
         },
         fetchQuestion(quest_key){
           var self = this;
@@ -276,6 +280,7 @@
         },
 
         validateAnswer(){
+          this.$Progress.start();
 
           // Checking the answer
           if (this.answer === this.quest['answer1']) {
@@ -343,9 +348,12 @@
             this.correct_answer = this.question[this.question_key]['correct_answer'];
           }
 
+          this.$Progress.finish();
 
         },
         results(){
+          this.$Progress.start();
+
           $('#modalr').modal('hide');
 
           var index, len;
@@ -360,6 +368,7 @@
           this.correct_percentage = this.correct * 100 / this.number;
           this.show_results = true;
 
+          this.$Progress.finish();
 
         },
         paginationStatus(n, key){
@@ -401,12 +410,13 @@
           window.location.reload();
         },
         reportQuestion(id){
+          this.$Progress.start();
           this.validate_count++;
 
           if (this.validate_count++ === 10) {
             window.location.replace("404");
           }
-          
+
           axios({
             method: 'put',
             url: '../api/report/'+id+'/',
@@ -414,12 +424,35 @@
               report: 'true',
             }
           })
-          .then(function (response) {
-            console.log(response);
-          })
-          .catch(function (error) {
-            console.log(error);
+          .then(function () {
+            toast.fire({
+              icon: 'success',
+              title: 'We will review your report, Thank You'
+            });
           });
+
+          this.$Progress.finish();
+
+        },
+
+        closeModal(){
+          confirmationQuit.fire({
+            title: 'Are you sure?',
+            text: "You will lose all the data",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Quit',
+            cancelButtonText: 'Cancel',
+            reverseButtons: true
+          }).then((result) => {
+            if (result.value) {
+              $('#modalr').modal('hide');
+            } else if (
+              /* Read more about handling dismissals below */
+              result.dismiss === swal.DismissReason.cancel
+            ) {
+            }
+          })
         }
 
       },
