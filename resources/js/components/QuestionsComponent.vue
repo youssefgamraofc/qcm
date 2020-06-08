@@ -87,6 +87,46 @@
       </div>
 
 
+
+    <!-- Modal -->
+    <div class="modal fade" id="highscoremodal" tabindex="-1" role="dialog" aria-labelledby="highscoremodalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="highscoremodalLabel">Modal title</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form @submit.prevent="addToHighscore">
+              <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" class="form-control" id="name" aria-describedby="name"  v-model="form.name"
+                :class="{ 'is-invalid': form.errors.has('name') }">
+                <small id="name" class="form-text text-muted">Your name will be shown in the highscore board.</small>
+                <has-error :form="form" field="name"></has-error>
+              </div>
+
+              <div class="form-group">
+                <label for="exampleInputEmail1">Email address</label>
+                <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="email" v-model="form.email"
+                :class="{ 'is-invalid': form.errors.has('email') }">
+                <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+                <has-error :form="form" field="email"></has-error>
+
+              </div>
+
+               <button :disabled="form.busy" type="submit" class="btn btn-outline-primary btn-block btn-lg">Submit</button>
+
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
       <!-- Modal -->
       <div class="modal fade " id="modalr" tabindex="-1" role="dialog" aria-labelledby="modalrTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
@@ -109,19 +149,19 @@
                   <div class="radio-toolbar-type ">
                     <div class="row">
                       <div class="col text-center">
-                        <div class="mr-2">
+                        <div class="mr-2 col">
                           <input type="radio" :id="'answer1'" v-model="answer" v-bind:value="quest.answer1" >
                           <label :for="'answer1'">{{quest.answer1}}</label>
                         </div>
-                        <div class="mr-2">
+                        <div class="mr-2 col">
                           <input type="radio" :id="'answer2'" v-model="answer" v-bind:value="quest.answer2" >
                           <label :for="'answer2'">{{quest.answer2}}</label>
                         </div>
-                        <div class="mr-2">
+                        <div class="mr-2 col">
                           <input type="radio" :id="'answer3'" v-model="answer" v-bind:value="quest.answer3" >
                           <label :for="'answer3'">{{quest.answer3}}</label>
                         </div>
-                        <div class="mr-2">
+                        <div class="mr-2 col">
                           <input type="radio" :id="'answer4'" v-model="answer" v-bind:value="quest.answer4" >
                           <label :for="'answer4'">{{quest.answer4}}</label>
                         </div>
@@ -221,6 +261,16 @@
 
           correct_percentage: '',
 
+          // THe form to add user to the hishscore board
+
+          form: new Form({
+             name: '',
+             email: '',
+             score: '',
+             number_of_questions: '',
+             type_id: '',
+           })
+
         }
       },
       methods:{
@@ -245,6 +295,11 @@
           this.incorrect = "0";
           this.fetchQuestion();
           this.$Progress.finish();
+
+          this.form.type_id = this.type;
+          this.form.number_of_questions = this.number;
+
+
 
         },
         fetchQuestion(quest_key){
@@ -368,6 +423,36 @@
           this.correct_percentage = this.correct * 100 / this.number;
           this.show_results = true;
 
+          if (this.correct_percentage) {
+
+            this.form.score = this.correct_percentage;
+
+
+            confirmationQuit.fire({
+              title: 'Congratulation',
+              text: "Would you like to add your name in the board with the winners?",
+              icon: 'success',
+              showCancelButton: true,
+              confirmButtonText: 'Yes',
+              cancelButtonText: 'No',
+              reverseButtons: true
+            }).then((result) => {
+              if (result.value) {
+                $('#highscoremodal').modal('show');
+
+              } else if (
+                /* Read more about handling dismissals below */
+                result.dismiss === swal.DismissReason.cancel
+              ) {
+                confirmationHighscore.fire(
+                  'Cancelled',
+                  'Your imaginary file is safe :)',
+                  'error'
+                )
+              }
+            })
+          }
+
           this.$Progress.finish();
 
         },
@@ -452,6 +537,26 @@
               result.dismiss === swal.DismissReason.cancel
             ) {
             }
+          })
+        },
+        addToHighscore(){
+
+          console.log('hiiiiiiiiiiiit');
+          // Submit the form via a POST request
+          this.form.post('api/highscore')
+          .then(
+            $('#highscoremodal').modal('hide'),
+
+            toast.fire({
+               icon: 'success',
+               title: 'You were added to the board,'
+             })
+           )
+          .catch(()=>{
+            toast.fire({
+               icon: 'warning',
+               title: 'SOmething wrong,'
+             })
           })
         }
 

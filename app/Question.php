@@ -21,7 +21,7 @@ class Question extends Model
       ];
 
 
-      if ($id) {
+      if ($id && $id <= count($types)) {
         return $types[$id];
       }
 

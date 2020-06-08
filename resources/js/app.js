@@ -11,6 +11,12 @@ window.Vue = require('vue');
 import swal from 'sweetalert2';
 window.swal = swal;
 
+import { Form, HasError, AlertError } from 'vform';
+window.Form = Form;
+Vue.component(HasError.name, HasError)
+Vue.component(AlertError.name, AlertError)
+
+
 const toast = swal.mixin({
   toast: true,
   position: 'top-end',
@@ -23,10 +29,19 @@ const toast = swal.mixin({
   }
 });
 
+
 const confirmationQuit = swal.mixin({
   customClass: {
     confirmButton: 'btn btn-secondary btn-lg ml-3',
     cancelButton: 'btn btn-info btn-lg'
+  },
+  buttonsStyling: false
+})
+
+const confirmationHighscore = swal.mixin({
+  customClass: {
+    confirmButton: 'btn btn-success btn-lg ml-3',
+    cancelButton: 'btn btn-secondary btn-lg'
   },
   buttonsStyling: false
 })

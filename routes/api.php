@@ -18,6 +18,9 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::get('highscore', 'Api\HighscoreController@index');
+Route::post('highscore', 'Api\HighscoreController@store');
+
 Route::get('questions', 'Api\QuestionController@index');
 Route::get('question/{id}', 'Api\QuestionController@show');
 
