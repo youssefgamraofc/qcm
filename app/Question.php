@@ -37,12 +37,12 @@ class Question extends Model
 
     public function countQuestionsByType($type){
       if (is_numeric($type) && $this->types($type)) {
-        return $this::where('type', $type)->get()->count();
+        return $this::where('type', $type)->where('validated', '1')->get()->count();
       }
       return '';
     }
 
-    public function available_pagination(){
+    public function available_pagination($type = null){
       return [20,30,40,50];
     }
 }

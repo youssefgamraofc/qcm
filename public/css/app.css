@@ -10956,7 +10956,7 @@ a.text-dark:focus {
 }
 
 .add-form input {
-  font-size: 18px;
+  font-size: 25px;
 }
 
 .add-form option {
@@ -10974,6 +10974,17 @@ a.text-dark:focus {
 .radio-toolbar-type,
 .radio-toolbar-number {
   margin: 10px;
+}
+
+.radio-toolbar-type label:disabled:hover,
+.radio-toolbar-type label[disabled]:hover,
+.radio-toolbar-number label:disabled:hover,
+.radio-toolbar-number label[disabled]:hover {
+  background-color: #ecf0f1;
+  padding: 10px 20px;
+  font-family: sans-serif, Arial;
+  font-size: 18px;
+  border: 2px solid #3498db;
 }
 
 .radio-toolbar-type input[type=radio],

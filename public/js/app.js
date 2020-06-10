@@ -2182,6 +2182,7 @@ __webpack_require__.r(__webpack_exports__);
       quest: '',
       types: {},
       available_pagination: {},
+      paginations: {},
       question: {},
       pagination: {},
       show_results: false,
@@ -2197,7 +2198,8 @@ __webpack_require__.r(__webpack_exports__);
         score: '',
         number_of_questions: '',
         type_id: ''
-      })
+      }),
+      clicked: '0'
     };
   },
   methods: {
@@ -2209,6 +2211,7 @@ __webpack_require__.r(__webpack_exports__);
       }).then(function (res) {
         _this.types = res.types;
         _this.available_pagination = res.available_pagination;
+        _this.paginations = res.paginations;
       })["catch"](function (err) {
         return console.log(err);
       });
@@ -2428,6 +2431,22 @@ __webpack_require__.r(__webpack_exports__);
           title: 'SOmething wrong,'
         });
       });
+    },
+    showPagination: function showPagination(key) {
+      if (this.type == 99) {
+        return true;
+      } else if (key <= this.paginations[this.type]) {
+        return true;
+      }
+
+      return false;
+    },
+    checkedType: function checkedType(id) {
+      this.clicked++;
+
+      if (this.clicked > 10) {
+        window.location.replace("404");
+      }
     }
   },
   mounted: function mounted() {
@@ -42396,6 +42415,7 @@ var render = function() {
                       attrs: { type: "radio", id: "radio2099", value: "99" },
                       domProps: { checked: _vm._q(_vm.type, "99") },
                       on: {
+                        click: _vm.checkedType,
                         change: function($event) {
                           _vm.type = "99"
                         }
@@ -42423,6 +42443,7 @@ var render = function() {
                             checked: _vm._q(_vm.type, key)
                           },
                           on: {
+                            click: _vm.checkedType,
                             change: function($event) {
                               _vm.type = key
                             }
@@ -42448,32 +42469,38 @@ var render = function() {
                   "div",
                   { staticClass: "row" },
                   _vm._l(_vm.available_pagination, function(value, key) {
-                    return _c("div", { key: key }, [
-                      _c("input", {
-                        directives: [
-                          {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.number,
-                            expression: "number"
-                          }
-                        ],
-                        attrs: { type: "radio", id: "radio20" + key },
-                        domProps: {
-                          value: value,
-                          checked: _vm._q(_vm.number, value)
-                        },
-                        on: {
-                          change: function($event) {
-                            _vm.number = value
-                          }
-                        }
-                      }),
-                      _vm._v(" "),
-                      _c("label", { attrs: { for: "radio20" + key } }, [
-                        _vm._v(_vm._s(value))
-                      ])
-                    ])
+                    return _vm.showPagination(value)
+                      ? _c("div", { key: key }, [
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.number,
+                                expression: "number"
+                              }
+                            ],
+                            attrs: {
+                              type: "radio",
+                              id: "radio20" + key,
+                              disabled: !_vm.showPagination(value)
+                            },
+                            domProps: {
+                              value: value,
+                              checked: _vm._q(_vm.number, value)
+                            },
+                            on: {
+                              change: function($event) {
+                                _vm.number = value
+                              }
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c("label", { attrs: { for: "radio20" + key } }, [
+                            _vm._v(_vm._s(value))
+                          ])
+                        ])
+                      : _vm._e()
                   }),
                   0
                 )
@@ -55439,15 +55466,14 @@ __webpack_require__.r(__webpack_exports__);
 /*!********************************************************!*\
   !*** ./resources/js/components/QuestionsComponent.vue ***!
   \********************************************************/
-/*! no static exports found */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _QuestionsComponent_vue_vue_type_template_id_16b373db___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./QuestionsComponent.vue?vue&type=template&id=16b373db& */ "./resources/js/components/QuestionsComponent.vue?vue&type=template&id=16b373db&");
 /* harmony import */ var _QuestionsComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./QuestionsComponent.vue?vue&type=script&lang=js& */ "./resources/js/components/QuestionsComponent.vue?vue&type=script&lang=js&");
-/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _QuestionsComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _QuestionsComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__[key]; }) }(__WEBPACK_IMPORT_KEY__));
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
 
@@ -55477,7 +55503,7 @@ component.options.__file = "resources/js/components/QuestionsComponent.vue"
 /*!*********************************************************************************!*\
   !*** ./resources/js/components/QuestionsComponent.vue?vue&type=script&lang=js& ***!
   \*********************************************************************************/
-/*! no static exports found */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

@@ -28,21 +28,16 @@ class HighscoreController extends Controller
             'number_of_questions' => 'required', 'integer',
           ]);
 
-          return Highscore::create([
+          Highscore::create([
             'type_id' => $request['type_id'],
             'user_name' => $request['name'],
             'email' => $request['email'],
             'score' => $request['score'],
             'number_of_questions' => $request['number_of_questions'],
           ]);
-        }else {
-          return $request['number_of_questions'];
         }
 
 
       }
-
-
-      return 'no';
     }
 }

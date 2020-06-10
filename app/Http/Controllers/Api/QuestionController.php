@@ -25,13 +25,16 @@ class QuestionController extends Controller
                                     ->limit($pagination)
                                     ->get();
             }else {
-              $query = Question::where('type', $type)
+              $questions = Question::where('type', $type)
                                     ->where('validated', '1')
                                     ->limit($pagination)
                                     ->get();
             }
 
-            return QuestionResource::collection($questions);
+            return QuestionResource::collection($questions)
+                ->additional(['count' => [
+                    'count' => $questions->count(),
+                ]]);
 
           }
         }
@@ -81,10 +84,21 @@ class QuestionController extends Controller
       $question = Question::limit(1)->first();
       $question_m = new Question();
 
+      $paginations = [];
+
+      foreach ($question_m->types() as $key => $value) {
+        for ($x = 2; $x <= 5; $x++) {
+          if ($question_m->countQuestionsByType($key) >= $x*10) {
+            $paginations[$key] = $x*10;
+          }
+        }
+      }
+
       return (new QuestionResource($question))
                   ->additional([
                     'types' => $question_m->types(),
                     'available_pagination' => $question_m->available_pagination(),
+                    'paginations' => $paginations,
                   ]);
 
     }

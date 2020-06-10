@@ -27,7 +27,7 @@
 }
 .add-form{
   input{
-    font-size: 18px;
+    font-size: 25px;
   }
   option{
     font-size: 18px;
@@ -46,6 +46,15 @@
 
 .radio-toolbar-type , .radio-toolbar-number{
   margin: 10px;
+
+  label:disabled:hover,
+  label[disabled]:hover{
+    background-color: #ecf0f1;
+    padding: 10px 20px;
+    font-family: sans-serif, Arial;
+    font-size: 18px;
+    border: 2px solid #3498db;
+  }
 
   input[type="radio"] {
     opacity: 0;

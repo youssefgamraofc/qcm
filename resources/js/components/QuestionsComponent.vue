@@ -54,11 +54,11 @@
                 <h3>Select a type</h3>
                 <div class="radio-toolbar-type ">
                   <div class="row">
-                    <input  type="radio" id="radio2099" v-model="type" value="99">
+                    <input  type="radio" id="radio2099" v-model="type" value="99" @click="checkedType">
                     <label for="radio2099">All</label>
 
                     <div v-for="(value, key) in types" v-bind:key="key" class="mr-2">
-                      <input type="radio" :id="key+'point'" v-model="type" v-bind:value="key" >
+                      <input type="radio" :id="key+'point'" v-model="type" v-bind:value="key" @click="checkedType">
                       <label :for="key+'point'">{{value}}</label>
                     </div>
                   </div>
@@ -70,8 +70,8 @@
                 <div class="radio-toolbar-number">
                   <div class="row">
 
-                    <div v-for="(value, key) in available_pagination" v-bind:key="key">
-                      <input type="radio" :id="'radio20'+key" v-model="number" v-bind:value="value" >
+                    <div v-for="(value, key) in available_pagination" v-bind:key="key" v-if="showPagination(value)">
+                      <input type="radio" :id="'radio20'+key" v-model="number" v-bind:value="value" :disabled="!showPagination(value)">
                       <label :for="'radio20'+key">{{value}}</label>
                     </div>
                   </div>
@@ -247,6 +247,7 @@
 
           types: {},
           available_pagination: {},
+          paginations: {},
 
           question: {},
           pagination: {},
@@ -269,7 +270,9 @@
              score: '',
              number_of_questions: '',
              type_id: '',
-           })
+           }),
+
+           clicked: '0'
 
         }
       },
@@ -280,6 +283,7 @@
             .then(res => {
               this.types = res.types;
               this.available_pagination = res.available_pagination;
+              this.paginations = res.paginations;
 
             })
             .catch(err => console.log(err));
@@ -558,8 +562,22 @@
                title: 'SOmething wrong,'
              })
           })
-        }
-
+        },
+        showPagination(key){
+          if (this.type == 99 ) {
+            return true;
+          }
+          else if (key <= this.paginations[this.type]) {
+            return true;
+          }
+          return false;
+        },
+        checkedType(id){
+          this.clicked++;
+          if (this.clicked > 10) {
+            window.location.replace("404");
+          }
+        },
       },
       mounted() {
         this.getTypes();
