@@ -13,8 +13,11 @@ use App\Http\Resources\Highscore as HighscoreResource;
 class HighscoreController extends Controller
 {
     public function index(){
-      dd('index');
+      $highscore_m = new Highscore();
+      $highscores = $highscore_m->getAll();
+      return HighscoreResource::collection($highscores);
     }
+
     public function store(Request $request){
       $question_m = new Question();
 

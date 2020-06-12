@@ -30,3 +30,5 @@ Route::get('questions/edit/{id}', 'QuestionController@edit')->name('edit');
 Route::patch('questions/edit/{id}', 'QuestionController@update');
 Route::delete('questions/delete/{id}', 'QuestionController@destroy')->name('delete');
 Route::get('/questions/type/{id}', 'QuestionController@questionsByType')->name('questions.type');
+
+Route::get('/highscore', 'HighscoreController@index')->name('highscore');

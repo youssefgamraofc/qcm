@@ -20,8 +20,9 @@ class Question extends Model
         4 => 'المغرب',
       ];
 
-
-      if ($id && $id <= count($types)) {
+      if ($id == 99) {
+        return 'All';
+      }elseif (in_array($id ,array_keys($types))) {
         return $types[$id];
       }
 
